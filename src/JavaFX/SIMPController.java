@@ -9,6 +9,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -28,6 +30,10 @@ public class SIMPController {
     @FXML
     private CheckBox eraser;
 
+    private FileChooser fileChooser;
+
+    private Stage stage;
+
     public void initialize() {
         GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
 
@@ -43,6 +49,8 @@ public class SIMPController {
                 graphicsContext.fillRect(x, y, size, size);
             }
         });
+
+        fileChooser = new FileChooser();
     }
 
     public void onSave() {
@@ -67,19 +75,7 @@ public class SIMPController {
         return canvas;
     }
 
-    public void setCanvas(Canvas canvas) {
-        this.canvas = canvas;
-    }
-
-    public TextField getBrushSize() {
-        return brushSize;
-    }
-
-    public ColorPicker getColorPicker() {
-        return colorPicker;
-    }
-
-    public CheckBox getEraser() {
-        return eraser;
+    public void setStage(Stage stage) {
+        this.stage = stage;
     }
 }

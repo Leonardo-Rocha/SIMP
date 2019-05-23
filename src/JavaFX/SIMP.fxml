@@ -10,6 +10,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.CheckBox?>
+
 <BorderPane fx:controller="JavaFX.SIMPController"
             xmlns:fx="http://javafx.com/fxml"
             prefHeight="600.0" prefWidth="600.0">
