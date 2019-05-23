@@ -2,6 +2,7 @@ package JavaFX;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -13,8 +14,12 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
+import javax.swing.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 
 public class SIMPController {
 
@@ -30,12 +35,16 @@ public class SIMPController {
     @FXML
     private CheckBox eraser;
 
+    private GraphicsContext graphicsContext;
+
     private FileChooser fileChooser;
 
     private Stage stage;
 
+    private File currentFile;
+
     public void initialize() {
-        GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
+        graphicsContext = canvas.getGraphicsContext2D();
 
         canvas.setOnMouseDragged(e -> {
             double size = Double.parseDouble(brushSize.getText());
@@ -51,20 +60,78 @@ public class SIMPController {
         });
 
         fileChooser = new FileChooser();
+        setExtensionFilters();
+    }
+
+    private void setExtensionFilters() {
+        //TODO fix other formats not working(already tried jpg, jpeg, bmp).
+        String[] extensions = {"png"};
+        FileChooser.ExtensionFilter extensionFilter;
+        for (String format : extensions) {
+            String extension = "*." + format;
+            extensionFilter =
+                    new FileChooser.ExtensionFilter(format.toUpperCase() + " files (" + extension + ")",
+                            extension);
+            fileChooser.getExtensionFilters().add(extensionFilter);
+        }
+    }
+
+    public void onNew(ActionEvent actionEvent) {
+        //TODO implement logic - if there's an open file ask to save changes or not before clearing the canvas.
+    }
+
+    public void onOpen(ActionEvent actionEvent) {
+        try {
+            currentFile = fileChooser.showOpenDialog(stage);
+            BufferedImage bufferedImage;
+            Image image;
+            if (currentFile != null) {
+                bufferedImage = ImageIO.read(currentFile);
+                image = SwingFXUtils.toFXImage(bufferedImage, null );
+                graphicsContext.drawImage(image, 0, 0);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Failed to read image.");
+        }
     }
 
     public void onSave() {
+        if (currentFile != null) {
+            try {
+                Image snapshot = canvas.snapshot(null, null);
+                ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), getFileFormat(), currentFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Failed to save image.");
+            }
+        }
+        else
+            onSaveAs();
+    }
+
+    public void onSaveAs() {
         try {
             //TODO change this parameters to allow a file overwrite.
             Image snapshot = canvas.snapshot(null, null);
-            //TODO change this so the user can change the name, the path and the format.
-            ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png",
-                    new File("paint.png"));
+            fileChooser.setTitle("Save As");
+            currentFile = fileChooser.showSaveDialog(stage);
+            if (currentFile != null)
+                ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), getFileFormat(), currentFile);
         } catch (IOException e) {
             e.printStackTrace();
-            //TODO print this to the user.
-            System.out.println("Failed to save image.");
+            JOptionPane.showMessageDialog(null,"Failed to save image.");
         }
+    }
+
+    private String getFileFormat() {
+        String[] parsedFileName = currentFile.getName().split("\\.");
+        String formatName = "png";
+
+        if (parsedFileName.length > 1)
+            formatName = parsedFileName[1];
+
+        return formatName;
     }
 
     public void onExit() {
