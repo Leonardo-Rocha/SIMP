@@ -24,7 +24,7 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/JavaFX/SIMP.fxml"));
         Parent root = loader.load();
         controller = loader.getController();
-        controller.setStage(primaryStage);
+        controller.setPrimaryStage(primaryStage);
 
         primaryStage.setTitle(TITLE);
         primaryStage.setScene(new Scene(root, WIDTH, HEIGHT));
