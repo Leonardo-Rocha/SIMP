@@ -1,0 +1,35 @@
+.toggle-button {
+    -fx-background-image: url("images/icon_eraser.png");
+    -fx-background-repeat: stretch;
+    -fx-background-position: 50% 50%;
+    -fx-background-size: 100%;
+    -fx-background-color: transparent;
+}
+
+.toggle-button:selected {
+    -fx-background-color: #858585;
+}
+
+#undo {
+    -fx-background-image: url("images/icon_undo.png");
+    -fx-background-repeat: stretch;
+    -fx-background-position: 50% 50%;
+    -fx-background-size: 100%;
+    -fx-background-color: transparent;
+}
+
+#undo:pressed {
+    -fx-background-color: #858585;
+}
+
+#redo {
+    -fx-background-image: url("images/icon_redo.png");
+    -fx-background-repeat: stretch;
+    -fx-background-position: 50% 50%;
+    -fx-background-size: 100%;
+    -fx-background-color: transparent;
+}
+
+#redo:pressed {
+    -fx-background-color: #858585;
+}

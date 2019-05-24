@@ -6,10 +6,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -27,7 +26,7 @@ public class SIMPController {
     @FXML
     private Canvas canvas;
 
-    //TODO change to a HTML-like select.
+    //TODO change to a choice box.
     /** FXML BrushSize text field. */
     @FXML
     private TextField brushSize;
@@ -38,7 +37,15 @@ public class SIMPController {
 
     /** FXML Eraser checkbox. */
     @FXML
-    private CheckBox eraser;
+    private ToggleButton eraser;
+
+    /** FXML Undo button. */
+    @FXML
+    private Button undo;
+
+    /** FXML Redo button. */
+    @FXML
+    private Button redo;
 
     /** Canvas graphicsContext. */
     private GraphicsContext graphicsContext;
@@ -66,12 +73,14 @@ public class SIMPController {
         nextMove = new ArrayList<>();
 
         graphicsContext = canvas.getGraphicsContext2D();
+        canvas.setOnDragDetected(e-> canvas.startFullDrag());
 
+        //OnMouseDragged lambda.
         canvas.setOnMouseDragged(e -> {
+            //TODO enhance the fillRect and the drawAction(Undo + Redo) precision.
             double size = Double.parseDouble(brushSize.getText());
             double x = e.getX() - size / 2;
             double y = e.getY() - size / 2;
-
             if (eraser.isSelected()) {
                 graphicsContext.clearRect(x, y, size, size);
                 addDrawAction(null, size, x, y);
@@ -82,8 +91,9 @@ public class SIMPController {
                 addDrawAction(fillColor, size, x, y);
             }
         });
+
         canvas.setOnMouseDragEntered(e -> nextMove.clear());
-        canvas.setOnMouseDragOver(e -> previousMove = nextMove);
+        canvas.setOnMouseDragReleased(e -> previousMove = nextMove);
 
         fileChooser = new FileChooser();
         setExtensionFilters();
@@ -187,7 +197,7 @@ public class SIMPController {
     public void onRedo() {
         for(DrawAction drawAction : nextMove) {
             graphicsContext.setFill(drawAction.fillColor);
-            graphicsContext.clearRect(drawAction.x, drawAction.y, drawAction.size, drawAction.size);
+            graphicsContext.fillRect(drawAction.x, drawAction.y, drawAction.size, drawAction.size);
         }
     }
 
