@@ -37,7 +37,7 @@ public class SIMPController {
      * FXML BrushSize text field.
      */
     @FXML
-    private TextField brushSize;
+    private TextField brushSizeText;
 
     /**
      * FXML Color picker.
@@ -125,22 +125,40 @@ public class SIMPController {
 
         graphicsContext = canvas.getGraphicsContext2D();
         canvas.setOnDragDetected(e -> canvas.startFullDrag());
+        pencil.setSelected(true);
+        onBrushSizeTextChanged();
 
         //OnMouseDragged lambda.
         canvas.setOnMouseDragged(e -> {
             //TODO enhance the fillRect and the drawAction(Undo + Redo) precision.
-            double size = Double.parseDouble(brushSize.getText());
+            double size = brushSizeSlider.getValue();
             double x = e.getX() - size / 2;
             double y = e.getY() - size / 2;
-            if (eraser.isSelected()) {
-                graphicsContext.clearRect(x, y, size, size);
-                addDrawAction(null, size, x, y);
-            } else if (pencil.isSelected()) {
+
+            if (pencil.isSelected()) {
                 Color fillColor = colorPicker.getValue();
                 graphicsContext.setFill(fillColor);
                 graphicsContext.fillRect(x, y, size, size);
                 addDrawAction(fillColor, size, x, y);
+            } else if (eraser.isSelected()) {
+                graphicsContext.clearRect(x, y, size, size);
+                addDrawAction(null, size, x, y);
             }
+        });
+
+        canvas.setOnMouseClicked(e -> {
+            double x = e.getX();
+            double y = e.getY();
+            //TODO make these actions to support undo/redo
+            if (fillColor.isSelected()) {
+                //TODO fillColor logic
+            } else if (text.isSelected()) {
+                //TODO improve this input dialog - add title, icon, etc.
+                String input = JOptionPane.showInputDialog("Enter text: ");
+                //TODO add textSize and alignment.
+                graphicsContext.setFill(colorPicker.getValue());
+                graphicsContext.fillText(input, x, y);
+            } //TODO add cases for the different shapes.
         });
 
         canvas.setOnMouseDragEntered(e -> nextMove.clear());
@@ -258,6 +276,18 @@ public class SIMPController {
         }
     }
 
+    public void onBrushSizeSliderChanged() {
+        //TODO enhance this method - format the text and bind the method to correct slider actions.
+        double value = brushSizeSlider.getValue();
+        String text = String.valueOf(value);
+        brushSizeText.setText(text);
+    }
+
+    public void onBrushSizeTextChanged() {
+        double value = Double.parseDouble(brushSizeText.getText());
+        brushSizeSlider.setValue(value);
+    }
+
     public void onPencilSelected() {
         deselectOtherToggles("pencil");
     }
@@ -340,6 +370,7 @@ public class SIMPController {
      * DrawAction data structure to store all mouse drag actions.
      */
     private class DrawAction {
+        //TODO add an enum to handle text, fillColor and shapes
         Color fillColor;
         double size;
         double x;
