@@ -8,7 +8,6 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseDragEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -22,48 +21,100 @@ import java.util.*;
 
 public class SIMPController {
 
-    /** FXML Canvas. */
+    /**
+     * FXML Canvas.
+     */
     @FXML
     private Canvas canvas;
 
-    //TODO change to a choice box.
-    /** FXML BrushSize text field. */
+    /**
+     * FXML BrushSize text field.
+     */
+    @FXML
+    private Slider brushSizeSlider;
+
+    /**
+     * FXML BrushSize text field.
+     */
     @FXML
     private TextField brushSize;
 
-    /** FXML Color picker. */
+    /**
+     * FXML Color picker.
+     */
     @FXML
     private ColorPicker colorPicker;
 
-    /** FXML Eraser checkbox. */
+    /**
+     * FXML Eraser checkbox.
+     */
     @FXML
     private ToggleButton eraser;
 
-    /** FXML Undo button. */
+    /**
+     * FXML Undo button.
+     */
     @FXML
     private Button undo;
 
-    /** FXML Redo button. */
+    /**
+     * FXML Redo button.
+     */
     @FXML
     private Button redo;
 
-    /** Canvas graphicsContext. */
+    /**
+     * FXML fillColor button.
+     */
+    @FXML
+    private ToggleButton fillColor;
+
+    /**
+     * FXML Redo button.
+     */
+    @FXML
+    private ToggleButton pencil;
+
+    /**
+     * FXML Redo button.
+     */
+    @FXML
+    private ToggleButton text;
+
+    /**
+     * Canvas graphicsContext.
+     */
     private GraphicsContext graphicsContext;
 
-    /** File chooser reference. */
+    /**
+     * File chooser reference.
+     */
     private FileChooser fileChooser;
 
-    /** Application primaryStage.*/
+    /**
+     * Application primaryStage.
+     */
     private Stage primaryStage;
 
-    /** Current file being used. */
+    /**
+     * Current file being used.
+     */
     private File currentFile;
 
-    /** Previous move DrawAction List to be used on Undo action. */
+    /**
+     * Previous move DrawAction List to be used on Undo action.
+     */
     private List<DrawAction> previousMove;
 
-    /** Next move DrawAction List to be used on Redo action. */
+    /**
+     * Next move DrawAction List to be used on Redo action.
+     */
     private List<DrawAction> nextMove;
+
+    /**
+     * Toggle Buttons map to keep only one button selected.
+     */
+    private Map<String, ToggleButton> toggleButtons;
 
     /**
      * Special signature method initialize. Instantiates some variables and bind the mouse actions.
@@ -73,7 +124,7 @@ public class SIMPController {
         nextMove = new ArrayList<>();
 
         graphicsContext = canvas.getGraphicsContext2D();
-        canvas.setOnDragDetected(e-> canvas.startFullDrag());
+        canvas.setOnDragDetected(e -> canvas.startFullDrag());
 
         //OnMouseDragged lambda.
         canvas.setOnMouseDragged(e -> {
@@ -84,7 +135,7 @@ public class SIMPController {
             if (eraser.isSelected()) {
                 graphicsContext.clearRect(x, y, size, size);
                 addDrawAction(null, size, x, y);
-            } else {
+            } else if (pencil.isSelected()) {
                 Color fillColor = colorPicker.getValue();
                 graphicsContext.setFill(fillColor);
                 graphicsContext.fillRect(x, y, size, size);
@@ -97,6 +148,12 @@ public class SIMPController {
 
         fileChooser = new FileChooser();
         setExtensionFilters();
+
+        toggleButtons = new HashMap<>();
+        toggleButtons.put("pencil", pencil);
+        toggleButtons.put("eraser", eraser);
+        toggleButtons.put("fillColor", fillColor);
+        toggleButtons.put("text", text);
     }
 
     /**
@@ -186,7 +243,7 @@ public class SIMPController {
      * Undo button action. Undo the last draw movement.
      */
     public void onUndo() {
-        for(DrawAction drawAction : previousMove) {
+        for (DrawAction drawAction : previousMove) {
             graphicsContext.clearRect(drawAction.x, drawAction.y, drawAction.size, drawAction.size);
         }
     }
@@ -195,14 +252,45 @@ public class SIMPController {
      * Redo button action. Redo the last draw movement.
      */
     public void onRedo() {
-        for(DrawAction drawAction : nextMove) {
+        for (DrawAction drawAction : nextMove) {
             graphicsContext.setFill(drawAction.fillColor);
             graphicsContext.fillRect(drawAction.x, drawAction.y, drawAction.size, drawAction.size);
         }
     }
 
+    public void onPencilSelected() {
+        deselectOtherToggles("pencil");
+    }
+
+    public void onEraserSelected() {
+        deselectOtherToggles("eraser");
+    }
+
+    public void onFillColorSelected() {
+        deselectOtherToggles("fillColor");
+    }
+
+    public void onTextSelected() {
+        deselectOtherToggles("text");
+    }
+
+    /**
+     * Loop through the toggleButtons map and deselect all the toggles, except the selected one.
+     *
+     * @param selectedToggle most recently selected ToggleButton.
+     */
+    void deselectOtherToggles(String selectedToggle) {
+        for (Map.Entry m : toggleButtons.entrySet()) {
+            if (m.getKey() != selectedToggle) {
+                ToggleButton toggleButton = (ToggleButton) m.getValue();
+                toggleButton.setSelected(false);
+            }
+        }
+    }
+
     /**
      * Parse the file name.
+     *
      * @return the file format/extension.
      */
     private String getFileFormat() {
@@ -217,12 +305,13 @@ public class SIMPController {
 
     /**
      * Add a DrawAction to the nextMove list.
+     *
      * @param fillColor color set on the ColorPicker.
-     * @param bIsDraw true if the action is a draw, false otherwise.
-     * @param bIsErase true if the action is a draw, false otherwise.
-     * @param size size of the rectangle.
-     * @param x position x of the rectangle in the canvas.
-     * @param y position y of the rectangle in the canvas.
+     * @param bIsDraw   true if the action is a draw, false otherwise.
+     * @param bIsErase  true if the action is a draw, false otherwise.
+     * @param size      size of the rectangle.
+     * @param x         position x of the rectangle in the canvas.
+     * @param y         position y of the rectangle in the canvas.
      */
     public void addDrawAction(Color fillColor, double size, double x, double y) {
         DrawAction drawAction = new DrawAction(fillColor, size, x, y);
@@ -231,6 +320,7 @@ public class SIMPController {
 
     /**
      * Canvas getter.
+     *
      * @return canvas.
      */
     public Canvas getCanvas() {
@@ -239,6 +329,7 @@ public class SIMPController {
 
     /**
      * Stage setter.
+     *
      * @param primaryStage reference to set.
      */
     public void setPrimaryStage(Stage primaryStage) {

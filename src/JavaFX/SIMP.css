@@ -1,25 +1,10 @@
-.toggle-button {
-    -fx-background-image: url("images/icon_eraser.png");
-    -fx-background-repeat: stretch;
-    -fx-background-position: 50% 50%;
-    -fx-background-size: 100%;
-    -fx-background-color: transparent;
-}
-
-.toggle-button:selected {
-    -fx-background-color: #858585;
-}
-
+/* Buttons. */
 #undo {
     -fx-background-image: url("images/icon_undo.png");
     -fx-background-repeat: stretch;
     -fx-background-position: 50% 50%;
     -fx-background-size: 100%;
     -fx-background-color: transparent;
-}
-
-#undo:pressed {
-    -fx-background-color: #858585;
 }
 
 #redo {
@@ -32,4 +17,68 @@
 
 #redo:pressed {
     -fx-background-color: #858585;
+}
+
+#undo:pressed {
+    -fx-background-color: #858585;
+}
+
+/* Toggle Buttons */
+
+#eraser {
+    -fx-background-image: url("images/icon_eraser.png");
+    -fx-background-repeat: stretch;
+    -fx-background-position: 50% 50%;
+    -fx-background-size: 100%;
+    -fx-background-color: transparent;
+}
+
+#fillColor {
+    -fx-background-image: url("images/icon_fillColor.png");
+    -fx-background-repeat: stretch;
+    -fx-background-position: 50% 50%;
+    -fx-background-size: 100%;
+    -fx-background-color: transparent;
+}
+
+#text {
+    -fx-background-image: url("images/icon_text.png");
+    -fx-background-repeat: stretch;
+    -fx-background-position: 50% 50%;
+    -fx-background-size: 100%;
+    -fx-background-color: transparent;
+}
+
+#pencil {
+    -fx-background-image: url("images/icon_pencil.png");
+    -fx-background-repeat: stretch;
+    -fx-background-position: 50% 50%;
+    -fx-background-size: 100%;
+    -fx-background-color: transparent;
+}
+
+#eraser:selected {
+    -fx-background-color: #858585;
+}
+
+#fillColor:selected {
+    -fx-background-color: #858585;
+}
+
+#text:selected {
+    -fx-background-color: #858585;
+}
+
+#pencil:selected {
+    -fx-background-color: #858585;
+}
+
+/* Miscellaneous */
+.VBox {
+    -fx-padding: 10;
+    -fx-border-style: dashed;
+    -fx-border-width: 2;
+    -fx-border-insets: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #0000ff;
 }
