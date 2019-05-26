@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -28,30 +29,6 @@ public class SIMPController {
     private Canvas canvas;
 
     /**
-     * FXML BrushSize text field.
-     */
-    @FXML
-    private Slider brushSizeSlider;
-
-    /**
-     * FXML BrushSize text field.
-     */
-    @FXML
-    private TextField brushSizeText;
-
-    /**
-     * FXML Color picker.
-     */
-    @FXML
-    private ColorPicker colorPicker;
-
-    /**
-     * FXML Eraser checkbox.
-     */
-    @FXML
-    private ToggleButton eraser;
-
-    /**
      * FXML Undo button.
      */
     @FXML
@@ -64,22 +41,64 @@ public class SIMPController {
     private Button redo;
 
     /**
-     * FXML fillColor button.
+     * FXML BrushSize insertText field.
      */
     @FXML
-    private ToggleButton fillColor;
+    private Slider brushSizeSlider;
 
     /**
-     * FXML Redo button.
+     * FXML BrushSize insertText field.
+     */
+    @FXML
+    private TextField brushSizeText;
+
+    /**
+     * FXML Color picker.
+     */
+    @FXML
+    private ColorPicker colorPicker;
+
+    /**
+     * FXML pencil toggle button.
      */
     @FXML
     private ToggleButton pencil;
 
     /**
-     * FXML Redo button.
+     * FXML eraser toggle button.
      */
     @FXML
-    private ToggleButton text;
+    private ToggleButton eraser;
+
+    /**
+     * FXML fillColor toggle button.
+     */
+    @FXML
+    private ToggleButton fillColor;
+
+    /**
+     * FXML insertText toggle button.
+     */
+    @FXML
+    private ToggleButton insertText;
+
+    /**
+     * FXML straightLine toggle button.
+     */
+    @FXML
+    public ToggleButton straightLine;
+
+    /**
+     * FXML square toggle button.
+     */
+    @FXML
+    public ToggleButton square;
+
+    /**
+     * FXML circle toggle button.
+     */
+    @FXML
+    public ToggleButton circle;
 
     /**
      * Canvas graphicsContext.
@@ -125,12 +144,14 @@ public class SIMPController {
 
         graphicsContext = canvas.getGraphicsContext2D();
         canvas.setOnDragDetected(e -> canvas.startFullDrag());
+        //Starts the app with the pencil selected.
         pencil.setSelected(true);
         onBrushSizeTextChanged();
 
         //OnMouseDragged lambda.
         canvas.setOnMouseDragged(e -> {
             //TODO enhance the fillRect and the drawAction(Undo + Redo) precision.
+            //TODO draw in different layers.
             double size = brushSizeSlider.getValue();
             double x = e.getX() - size / 2;
             double y = e.getY() - size / 2;
@@ -146,15 +167,16 @@ public class SIMPController {
             }
         });
 
+        //onMouseClicked lambda
         canvas.setOnMouseClicked(e -> {
             double x = e.getX();
             double y = e.getY();
             //TODO make these actions to support undo/redo
             if (fillColor.isSelected()) {
                 //TODO fillColor logic
-            } else if (text.isSelected()) {
+            } else if (insertText.isSelected()) {
                 //TODO improve this input dialog - add title, icon, etc.
-                String input = JOptionPane.showInputDialog("Enter text: ");
+                String input = JOptionPane.showInputDialog("Enter insertText: ");
                 //TODO add textSize and alignment.
                 graphicsContext.setFill(colorPicker.getValue());
                 graphicsContext.fillText(input, x, y);
@@ -171,7 +193,10 @@ public class SIMPController {
         toggleButtons.put("pencil", pencil);
         toggleButtons.put("eraser", eraser);
         toggleButtons.put("fillColor", fillColor);
-        toggleButtons.put("text", text);
+        toggleButtons.put("insertText", insertText);
+        toggleButtons.put("straightLine", straightLine);
+        toggleButtons.put("square", square);
+        toggleButtons.put("circle", circle);
     }
 
     /**
@@ -195,6 +220,7 @@ public class SIMPController {
      */
     public void onNew(ActionEvent actionEvent) {
         //TODO implement logic - if there's an open file ask to save changes or not before clearing the canvas.
+        graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
     /**
@@ -276,32 +302,71 @@ public class SIMPController {
         }
     }
 
+    /**
+     * Brush Size Slider action. Updates the text according to the slider value.
+     */
     public void onBrushSizeSliderChanged() {
-        //TODO enhance this method - format the text and bind the method to correct slider actions.
+        //TODO enhance this method - format the insertText and bind the method to correct slider actions.
         double value = brushSizeSlider.getValue();
         String text = String.valueOf(value);
         brushSizeText.setText(text);
     }
 
+    /**
+     * Brush Size Text action. Updates the slider according to the text value.
+     */
     public void onBrushSizeTextChanged() {
         double value = Double.parseDouble(brushSizeText.getText());
         brushSizeSlider.setValue(value);
     }
 
+    /**
+     * Pencil toggle button action. Deselect the other toggles except this one.
+     */
     public void onPencilSelected() {
         deselectOtherToggles("pencil");
     }
 
+    /**
+     * Eraser toggle button action. Deselect the other toggles except this one.
+     */
     public void onEraserSelected() {
         deselectOtherToggles("eraser");
     }
 
+    /**
+     * FillColor toggle button action. Deselect the other toggles except this one.
+     */
     public void onFillColorSelected() {
         deselectOtherToggles("fillColor");
     }
 
-    public void onTextSelected() {
-        deselectOtherToggles("text");
+    /**
+     * InsertText toggle button action. Deselect the other toggles except this one.
+     */
+    public void onInsertTextSelected() {
+        deselectOtherToggles("insertText");
+    }
+
+    /**
+     * StraightLine toggle button action. Deselect the other toggles except this one.
+     */
+    public void onStraightLineSelected(ActionEvent actionEvent) {
+        deselectOtherToggles("straightLine");
+    }
+
+    /**
+     * Square toggle button action. Deselect the other toggles except this one.
+     */
+    public void onSquareSelected(ActionEvent actionEvent) {
+        deselectOtherToggles("square");
+    }
+
+    /**
+     * Circle toggle button action. Deselect the other toggles except this one.
+     */
+    public void onCircleSelected(ActionEvent actionEvent) {
+        deselectOtherToggles("circle");
     }
 
     /**
@@ -364,23 +429,5 @@ public class SIMPController {
      */
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
-    }
-
-    /**
-     * DrawAction data structure to store all mouse drag actions.
-     */
-    private class DrawAction {
-        //TODO add an enum to handle text, fillColor and shapes
-        Color fillColor;
-        double size;
-        double x;
-        double y;
-
-        DrawAction(Color fillColor, double size, double x, double y) {
-            this.fillColor = fillColor;
-            this.size = size;
-            this.x = x;
-            this.y = y;
-        }
     }
 }

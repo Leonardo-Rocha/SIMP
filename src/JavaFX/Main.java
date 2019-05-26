@@ -10,9 +10,9 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     /** Scene preferred width. */
-    private static final double WIDTH = 896;
+    public static final double WIDTH = 896;
     /** Scene preferred height. */
-    private static final double HEIGHT = 504;
+    public static final double HEIGHT = 504;
     /** Application title. */
     private static final String TITLE = "SIMP";
 
@@ -29,22 +29,9 @@ public class Main extends Application {
         primaryStage.setTitle(TITLE);
         primaryStage.setScene(new Scene(root, WIDTH, HEIGHT));
 
-        configCanvasResize(primaryStage);
+        Utils.configCanvasResize(primaryStage, controller.getCanvas());
 
         primaryStage.show();
-    }
-
-    /**
-     * Config canvas automatic resize according to root size.
-     * @param primaryStage stage reference.
-     */
-    private void configCanvasResize(Stage primaryStage) {
-        Canvas canvas = controller.getCanvas();
-        canvas.setWidth(WIDTH);
-        canvas.setHeight(HEIGHT);
-
-        canvas.widthProperty().bind(primaryStage.widthProperty());
-        canvas.heightProperty().bind(primaryStage.heightProperty());
     }
 
     public static void main(String[] args) {

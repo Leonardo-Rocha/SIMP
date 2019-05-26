@@ -25,6 +25,14 @@
 
 /* Toggle Buttons */
 
+#pencil {
+    -fx-background-image: url("images/icon_pencil.png");
+    -fx-background-repeat: stretch;
+    -fx-background-position: 50% 50%;
+    -fx-background-size: 100%;
+    -fx-background-color: transparent;
+}
+
 #eraser {
     -fx-background-image: url("images/icon_eraser.png");
     -fx-background-repeat: stretch;
@@ -41,7 +49,7 @@
     -fx-background-color: transparent;
 }
 
-#text {
+#insertText {
     -fx-background-image: url("images/icon_text.png");
     -fx-background-repeat: stretch;
     -fx-background-position: 50% 50%;
@@ -49,12 +57,32 @@
     -fx-background-color: transparent;
 }
 
-#pencil {
-    -fx-background-image: url("images/icon_pencil.png");
+#straightLine {
+    -fx-background-image: url("images/icon_line.png");
     -fx-background-repeat: stretch;
     -fx-background-position: 50% 50%;
     -fx-background-size: 100%;
     -fx-background-color: transparent;
+}
+
+#square {
+    -fx-background-image: url("images/icon_rectangular.png");
+    -fx-background-repeat: stretch;
+    -fx-background-position: 50% 50%;
+    -fx-background-size: 100%;
+    -fx-background-color: transparent;
+}
+
+#circle {
+    -fx-background-image: url("images/icon_circle.png");
+    -fx-background-repeat: stretch;
+    -fx-background-position: 50% 50%;
+    -fx-background-size: 100%;
+    -fx-background-color: transparent;
+}
+
+#pencil:selected {
+    -fx-background-color: #858585;
 }
 
 #eraser:selected {
@@ -65,11 +93,19 @@
     -fx-background-color: #858585;
 }
 
-#text:selected {
+#insertText:selected {
     -fx-background-color: #858585;
 }
 
-#pencil:selected {
+#straightLine:selected {
+    -fx-background-color: #858585;
+}
+
+#square:selected {
+    -fx-background-color: #858585;
+}
+
+#circle:selected {
     -fx-background-color: #858585;
 }
 
