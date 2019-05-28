@@ -11,18 +11,33 @@ import javafx.util.Pair;
 import static JavaFX.Main.HEIGHT;
 import static JavaFX.Main.WIDTH;
 
-public class DrawLine {
+public class DrawableLine implements Drawable {
     private Canvas canvas;
     Line line;
     GraphicsContext graphicsContext;
     private Pair<Double, Double> initialPressCoordinate;
+    
+	
+	@Override
+	public void onMouseDragged(MouseEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void onMouseReleased(MouseEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
 
-    public DrawLine(Stage primaryStage, GraphicsContext graphicsContext, double x, double y) {
+    /*public DrawableLine(Stage primaryStage, GraphicsContext graphicsContext, double x, double y) {
         this.graphicsContext = graphicsContext;
         initialPressCoordinate = new Pair<>(x, y);
         Canvas newLayer = new Canvas(WIDTH, HEIGHT);
         Utils.configCanvasResize(primaryStage, newLayer);
         line = new Line(x, y, x, y);
+        
+        
     }
 
     public void onMouseDragged(MouseEvent event) {
@@ -31,6 +46,6 @@ public class DrawLine {
         context.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         context.strokeLine(initialPressCoordinate.getKey(), initialPressCoordinate.getValue(),
                 event.getX(), event.getSceneY());
-    }
+    }*/
 
 }

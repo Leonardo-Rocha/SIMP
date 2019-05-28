@@ -109,7 +109,7 @@
                                  <Insets />
                               </HBox.margin>
                            </ToggleButton>
-                           <ToggleButton fx:id="square" onAction="#onSquareSelected" prefHeight="20.0" prefWidth="20.0" stylesheets="@SIMP.css">
+                           <ToggleButton fx:id="rectangle" onAction="#onRectangleSelected" prefHeight="20.0" prefWidth="20.0" stylesheets="@SIMP.css">
                               <HBox.margin>
                                  <Insets left="5.0" />
                               </HBox.margin>
