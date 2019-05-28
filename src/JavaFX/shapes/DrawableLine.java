@@ -1,15 +1,12 @@
 package JavaFX.shapes;
 
-import JavaFX.Utils;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Line;
-import javafx.stage.Stage;
+import javafx.scene.shape.Shape;
 import javafx.util.Pair;
 
-import static JavaFX.Main.HEIGHT;
-import static JavaFX.Main.WIDTH;
 
 public class DrawableLine implements Drawable {
     private Canvas canvas;
@@ -20,14 +17,17 @@ public class DrawableLine implements Drawable {
 	
 	@Override
 	public void onMouseDragged(MouseEvent event) {
-		// TODO Auto-generated method stub
 		
 	}
 	
 	@Override
 	public void onMouseReleased(MouseEvent event) {
-		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public Shape getShape() {
+		return null;
 	}
 
     /*public DrawableLine(Stage primaryStage, GraphicsContext graphicsContext, double x, double y) {

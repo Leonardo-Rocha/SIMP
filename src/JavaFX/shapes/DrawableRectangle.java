@@ -1,8 +1,10 @@
 package JavaFX.shapes;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.util.Pair;
 
 public class DrawableRectangle implements Drawable {
@@ -21,18 +23,21 @@ public class DrawableRectangle implements Drawable {
 	
 	@Override
 	public void onMouseDragged(MouseEvent event) {
-		// TODO Auto-generated method stub
-		width = event.getX() - initialPressCoordinate.getKey();
-		height = event.getY() - initialPressCoordinate.getValue();
+		double x = initialPressCoordinate.getKey();
+		double y = initialPressCoordinate.getValue();
+		width = event.getX() - x;
+		height = event.getY() - y;
 		rectangle.setWidth(width);
 		rectangle.setHeight(height);
-		
 	}
 
 
 	@Override
 	public void onMouseReleased(MouseEvent event) {
-		// TODO Auto-generated method stub
 	}
 
+	@Override
+	public Shape getShape() {
+		return rectangle;
+	}
 }

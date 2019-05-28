@@ -8,20 +8,28 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class SIMPController {
@@ -135,12 +143,10 @@ public class SIMPController {
     private List<DrawAction> nextMove;
 
     /**
-     * Toggle Buttons map to keep only one button selected.
+     * Drawable shape interface.
      */
-    private Map<String, ToggleButton> toggleButtons;
-    
     private Drawable drawable;
-    
+
     /**
      * Special signature method initialize. Instantiates some variables and bind the mouse actions.
      */
@@ -149,50 +155,55 @@ public class SIMPController {
         nextMove = new ArrayList<>();
 
         graphicsContext = canvas.getGraphicsContext2D();
-        graphicsContext.setFill(Color.WHITE);
-        graphicsContext.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        graphicsContext.fill();
         canvas.setOnDragDetected(e -> canvas.startFullDrag());
         //Starts the app with the pencil selected.
         pencil.setSelected(true);
         onBrushSizeTextChanged();
+        graphicsContext.setLineCap(StrokeLineCap.ROUND);
+        graphicsContext.setLineJoin(StrokeLineJoin.ROUND);
 
         //OnMouseDragged lambda.
         canvas.setOnMouseDragged(e -> {
-            //TODO enhance the fillRect and the drawAction(Undo + Redo) precision.
             //TODO draw in different layers.
             double size = brushSizeSlider.getValue();
             double x = e.getX() - size / 2;
             double y = e.getY() - size / 2;
+            Color color = colorPicker.getValue();
+            graphicsContext.setLineWidth(size);
             if (pencil.isSelected()) {
-                Color fillColor = colorPicker.getValue();
-                graphicsContext.setFill(fillColor);
-                graphicsContext.fillRect(x, y, size, size);
-                addDrawAction(fillColor, size, x, y);
+                graphicsContext.setStroke(color);
+                graphicsContext.lineTo(x, y);
+                graphicsContext.stroke();
+                graphicsContext.closePath();
+                graphicsContext.beginPath();
+                graphicsContext.moveTo(x, y);
+                addDrawAction(color, size, x, y);
             } else if (eraser.isSelected()) {
                 graphicsContext.clearRect(x, y, size, size);
                 addDrawAction(null, size, x, y);
             } else if (straightLine.isSelected()) {
-            	
+
             } else if (rectangle.isSelected()) {
-            	try {
-            		drawable.onMouseDragged(e);
-            	} catch (NullPointerException exception) {
-            		//TODO print to log.
-            		System.out.println("Null drawable.");
-            	}
+                drawable.onMouseDragged(e);
+                Rectangle rect = (Rectangle) drawable.getShape();
+                graphicsContext.setFill(rect.getFill());
+                graphicsContext.fillRect(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
+
             } else if (circle.isSelected()) {
-            	
+
             }
         });
 
         //onMouseClicked lambda
-        canvas.setOnMouseClicked(e -> {
-            double x = e.getX();
-            double y = e.getY();
+        canvas.setOnMousePressed(e -> {
+            double x = e.getX() - brushSizeSlider.getValue() / 2;
+            double y = e.getY() - brushSizeSlider.getValue() / 2;
             Color color = colorPicker.getValue();
             //TODO make these actions to support undo/redo
-            if (fillColor.isSelected()) {
+            if (pencil.isSelected()) {
+                graphicsContext.moveTo(x, y);
+                graphicsContext.stroke();
+            } else if (fillColor.isSelected()) {
                 //TODO fillColor logic
             } else if (insertText.isSelected()) {
                 //TODO improve this input dialog - add title, icon, etc.
@@ -201,12 +212,11 @@ public class SIMPController {
                 graphicsContext.setFill(color);
                 graphicsContext.fillText(input, x, y);
             } else if (straightLine.isSelected()) {
-            	
+
             } else if (rectangle.isSelected()) {
-            	drawable = new DrawableRectangle(x,y, color);
-            	System.out.println(drawable);
+                drawable = new DrawableRectangle(x, y, color);
             } else if (circle.isSelected()) {
-            	
+
             }
         });
 
@@ -216,15 +226,6 @@ public class SIMPController {
         fileChooser = new FileChooser();
         setExtensionFilters();
 
-        // TODO change to FXML Groups.
-        toggleButtons = new HashMap<>();
-        toggleButtons.put("pencil", pencil);
-        toggleButtons.put("eraser", eraser);
-        toggleButtons.put("fillColor", fillColor);
-        toggleButtons.put("insertText", insertText);
-        toggleButtons.put("straightLine", straightLine);
-        toggleButtons.put("rectangle", rectangle);
-        toggleButtons.put("circle", circle);
     }
 
     /**
@@ -315,6 +316,7 @@ public class SIMPController {
      * Undo button action. Undo the last draw movement.
      */
     public void onUndo() {
+        //TODO enhance this using 2 canvas.
         for (DrawAction drawAction : previousMove) {
             graphicsContext.clearRect(drawAction.x, drawAction.y, drawAction.size, drawAction.size);
         }
@@ -334,7 +336,7 @@ public class SIMPController {
      * Brush Size Slider action. Updates the text according to the slider value.
      */
     public void onBrushSizeSliderChanged() {
-        //TODO enhance this method - format the insertText and bind the method to correct slider actions.
+        //TODO enhance this method - format the insertText(clamp dot) and bind the method to correct slider actions.
         double value = brushSizeSlider.getValue();
         String text = String.valueOf(value);
         brushSizeText.setText(text);
@@ -346,73 +348,6 @@ public class SIMPController {
     public void onBrushSizeTextChanged() {
         double value = Double.parseDouble(brushSizeText.getText());
         brushSizeSlider.setValue(value);
-    }
-
-    /**
-     * Pencil toggle button action. Deselect the other toggles except this one.
-     */
-    public void onPencilSelected() {
-        deselectOtherToggles("pencil");
-    }
-
-    /**
-     * Eraser toggle button action. Deselect the other toggles except this one.
-     */
-    public void onEraserSelected() {
-        deselectOtherToggles("eraser");
-    }
-
-    /**
-     * FillColor toggle button action. Deselect the other toggles except this one.
-     */
-    public void onFillColorSelected() {
-        deselectOtherToggles("fillColor");
-    }
-
-    /**
-     * InsertText toggle button action. Deselect the other toggles except this one.
-     */
-    public void onInsertTextSelected() {
-        deselectOtherToggles("insertText");
-    }
-
-    /**
-     * StraightLine toggle button action. Deselect the other toggles except this one.
-     */
-    public void onStraightLineSelected(ActionEvent actionEvent) {
-        deselectOtherToggles("straightLine");
-    }
-
-    /**
-     * Square toggle button action. Deselect the other toggles except this one.
-     */
-    public void onRectangleSelected(ActionEvent actionEvent) {
-        deselectOtherToggles("rectangle");
-    }
-
-    /**
-     * Circle toggle button action. Deselect the other toggles except this one.
-     */
-    public void onCircleSelected(ActionEvent actionEvent) {
-        deselectOtherToggles("circle");
-    }
-
-    /**
-     * Loop through the toggleButtons map and deselect all the toggles, except the selected one.
-     *
-     * @param selectedToggle most recently selected ToggleButton.
-     */
-    void deselectOtherToggles(String selectedToggle) {
-        for (Map.Entry m : toggleButtons.entrySet()) {
-            if (m.getKey() != selectedToggle) {
-            	try {
-            		ToggleButton toggleButton = (ToggleButton) m.getValue();
-                    toggleButton.setSelected(false);
-            	} catch (NullPointerException e) {
-            		e.printStackTrace();
-            	}
-            }
-        }
     }
 
     /**
