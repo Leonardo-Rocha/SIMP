@@ -10,6 +10,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -27,7 +29,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +40,12 @@ public class SIMPController {
      */
     @FXML
     private Canvas canvas;
+
+    /**
+     *
+     */
+    @FXML
+    private Menu recentFilesMenu;
 
     /**
      * FXML Undo button.
@@ -121,6 +128,11 @@ public class SIMPController {
      * File chooser reference.
      */
     private FileChooser fileChooser;
+
+    /**
+     * Map for recent files opened.
+     */
+    private Map<String, File> recentFiles;
 
     /**
      * Application primaryStage.
@@ -228,6 +240,23 @@ public class SIMPController {
 
     }
 
+    public void setupRecentFilesMenu() {
+        if (recentFiles != null) {
+            recentFilesMenu.getItems().clear();
+            recentFiles.forEach((k, v) -> {
+                MenuItem menuItem = new MenuItem(k);
+                menuItem.setOnAction(actionEvent -> {
+                    try {
+                        openImage(v);
+                    } catch (IOException exception) {
+                        exception.printStackTrace();
+                    }
+                });
+                recentFilesMenu.getItems().add(menuItem);
+            });
+        }
+    }
+
     /**
      * Set the extension filters in the file chooser so the user can select only the allowed file extensions.
      */
@@ -258,16 +287,24 @@ public class SIMPController {
     public void onOpen(ActionEvent actionEvent) {
         try {
             currentFile = fileChooser.showOpenDialog(primaryStage);
-            BufferedImage bufferedImage;
-            Image image;
-            if (currentFile != null) {
-                bufferedImage = ImageIO.read(currentFile);
-                image = SwingFXUtils.toFXImage(bufferedImage, null);
-                graphicsContext.drawImage(image, 0, 0);
-            }
+            openImage(currentFile);
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Failed to read image.");
+        }
+    }
+
+    private void openImage(File file) throws IOException {
+        BufferedImage bufferedImage;
+        Image image;
+        if (file != null) {
+            //TODO wrap canvas in a scrollpane to fit images bigger than the canvas.
+            bufferedImage = ImageIO.read(file);
+            image = SwingFXUtils.toFXImage(bufferedImage, null);
+            graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+            graphicsContext.drawImage(image, 0, 0);
+            Utils.addFileToProperties(file);
+            setupRecentFilesMenu();
         }
     }
 
@@ -280,6 +317,8 @@ public class SIMPController {
             try {
                 Image snapshot = canvas.snapshot(null, null);
                 ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), getFileFormat(), currentFile);
+                Utils.addFileToProperties(currentFile);
+                setupRecentFilesMenu();
             } catch (IOException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Failed to save image.");
@@ -297,8 +336,11 @@ public class SIMPController {
             Image snapshot = canvas.snapshot(null, null);
             fileChooser.setTitle("Save As");
             currentFile = fileChooser.showSaveDialog(primaryStage);
-            if (currentFile != null)
+            if (currentFile != null) {
                 ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), getFileFormat(), currentFile);
+                Utils.addFileToProperties(currentFile);
+                setupRecentFilesMenu();
+            }
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Failed to save image.");
@@ -369,8 +411,6 @@ public class SIMPController {
      * Add a DrawAction to the nextMove list.
      *
      * @param fillColor color set on the ColorPicker.
-     * @param bIsDraw   true if the action is a draw, false otherwise.
-     * @param bIsErase  true if the action is a draw, false otherwise.
      * @param size      size of the rectangle.
      * @param x         position x of the rectangle in the canvas.
      * @param y         position y of the rectangle in the canvas.
@@ -396,5 +436,16 @@ public class SIMPController {
      */
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
+    }
+
+    /**
+     * Log of recent files.
+     */
+    public Map<String, File> getRecentFiles() {
+        return recentFiles;
+    }
+
+    public void setRecentFiles(Map<String, File> recentFiles) {
+        this.recentFiles = recentFiles;
     }
 }

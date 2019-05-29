@@ -118,3 +118,7 @@
     -fx-border-radius: 5;
     -fx-border-color: #0000ff;
 }
+
+#canvasBackground {
+    -fx-background-color: white;
+}

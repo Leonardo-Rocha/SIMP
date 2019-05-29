@@ -15,19 +15,20 @@
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="504" prefWidth="896" xmlns="http://javafx.com/javafx/8.0.172-ea"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFX.SIMPController">
+<BorderPane prefHeight="504" prefWidth="896" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFX.SIMPController">
     <top>
         <VBox>
             <MenuBar>
                 <Menu text="File">
-                    <MenuItem onAction="#onNew" text="New"/>
-                    <MenuItem onAction="#onOpen" text="Open"/>
-                    <MenuItem onAction="#onSave" text="Save"/>
-                    <MenuItem onAction="#onSaveAs" text="Save As"/>
-                    <MenuItem onAction="#onExit" text="Exit"/>
+                    <MenuItem onAction="#onNew" text="New" />
+                    <MenuItem onAction="#onOpen" text="Open" />
+               <Menu fx:id="recentFilesMenu" mnemonicParsing="false" text="Recent Files" />
+                    <MenuItem onAction="#onSave" text="Save" />
+                    <MenuItem onAction="#onSaveAs" text="Save As" />
+                    <MenuItem onAction="#onExit" text="Exit" />
                 </Menu>
             </MenuBar>
 
@@ -37,113 +38,96 @@
                         <children>
                             <HBox prefHeight="42.0" prefWidth="49.0">
                                 <children>
-                                    <Button fx:id="undo" onAction="#onUndo" prefHeight="42.0" prefWidth="25.0"
-                                            stylesheets="@SIMP.css"/>
-                                    <Button fx:id="redo" onAction="#onRedo" prefHeight="42.0" prefWidth="25.0"
-                                            stylesheets="@SIMP.css"/>
+                                    <Button fx:id="undo" onAction="#onUndo" prefHeight="42.0" prefWidth="25.0" stylesheets="@SIMP.css" />
+                                    <Button fx:id="redo" onAction="#onRedo" prefHeight="42.0" prefWidth="25.0" stylesheets="@SIMP.css" />
                                 </children>
                             </HBox>
                         </children>
                         <HBox.margin>
-                            <Insets right="5.0"/>
+                            <Insets right="5.0" />
                         </HBox.margin>
                     </VBox>
                     <VBox stylesheets="@SIMP.css">
                         <children>
                             <HBox prefHeight="25.0" prefWidth="117.0">
                                 <children>
-                                    <Slider fx:id="brushSizeSlider" onDragDetected="#onBrushSizeSliderChanged"
-                                            onDragDone="#onBrushSizeSliderChanged"
-                                            onDragDropped="#onBrushSizeSliderChanged"
-                                            onDragExited="#onBrushSizeSliderChanged"
-                                            onMouseDragReleased="#onBrushSizeSliderChanged" prefHeight="25.0"
-                                            prefWidth="64.0"/>
-                                    <TextField fx:id="brushSizeText" onAction="#onBrushSizeTextChanged"
-                                               prefHeight="25.0" prefWidth="51.0" text="18">
+                                    <Slider fx:id="brushSizeSlider" onDragDetected="#onBrushSizeSliderChanged" onDragDone="#onBrushSizeSliderChanged" onDragDropped="#onBrushSizeSliderChanged" onDragExited="#onBrushSizeSliderChanged" onMouseDragReleased="#onBrushSizeSliderChanged" prefHeight="25.0" prefWidth="64.0" />
+                                    <TextField fx:id="brushSizeText" onAction="#onBrushSizeTextChanged" prefHeight="25.0" prefWidth="51.0" text="18">
                                         <HBox.margin>
-                                            <Insets left="2.0"/>
+                                            <Insets left="2.0" />
                                         </HBox.margin>
                                     </TextField>
                                 </children>
                             </HBox>
-                            <Label alignment="CENTER" opacity="0.6" prefHeight="17.0" prefWidth="115.0"
-                                   text="Brush Size" textAlignment="CENTER"/>
+                            <Label alignment="CENTER" opacity="0.6" prefHeight="17.0" prefWidth="115.0" text="Brush Size" textAlignment="CENTER" />
                         </children>
                     </VBox>
                     <VBox>
                         <children>
-                            <ColorPicker fx:id="colorPicker" prefWidth="125.0"/>
-                            <Label alignment="CENTER" contentDisplay="CENTER" opacity="0.6" prefWidth="125.0"
-                                   text="Color" textAlignment="CENTER"/>
+                            <ColorPicker fx:id="colorPicker" prefWidth="125.0" />
+                            <Label alignment="CENTER" contentDisplay="CENTER" opacity="0.6" prefWidth="125.0" text="Color" textAlignment="CENTER" />
                         </children>
                         <HBox.margin>
-                            <Insets left="5.0" right="5.0"/>
+                            <Insets left="5.0" right="5.0" />
                         </HBox.margin>
                     </VBox>
                     <VBox>
                         <children>
                             <HBox>
                                 <children>
-                                    <ToggleButton fx:id="pencil" prefHeight="20.0" prefWidth="20.0"
-                                                  stylesheets="@SIMP.css">
+                                    <ToggleButton fx:id="pencil" prefHeight="20.0" prefWidth="20.0" stylesheets="@SIMP.css">
                                         <HBox.margin>
-                                            <Insets/>
+                                            <Insets />
                                         </HBox.margin>
                                         <toggleGroup>
-                                            <ToggleGroup fx:id="group1"/>
+                                            <ToggleGroup fx:id="group1" />
                                         </toggleGroup>
                                     </ToggleButton>
-                                    <ToggleButton fx:id="eraser" prefHeight="20.0" prefWidth="20.0"
-                                                  stylesheets="@SIMP.css" toggleGroup="$group1">
+                                    <ToggleButton fx:id="eraser" prefHeight="20.0" prefWidth="20.0" stylesheets="@SIMP.css" toggleGroup="$group1">
                                         <HBox.margin>
-                                            <Insets left="5.0"/>
+                                            <Insets left="5.0" />
                                         </HBox.margin>
                                     </ToggleButton>
-                                    <ToggleButton fx:id="fillColor" prefHeight="20.0" prefWidth="20.0"
-                                                  stylesheets="@SIMP.css" toggleGroup="$group1">
+                                    <ToggleButton fx:id="fillColor" prefHeight="20.0" prefWidth="20.0" stylesheets="@SIMP.css" toggleGroup="$group1">
                                         <HBox.margin>
-                                            <Insets left="5.0"/>
+                                            <Insets left="5.0" />
                                         </HBox.margin>
                                     </ToggleButton>
-                                    <ToggleButton fx:id="insertText" prefHeight="20.0" prefWidth="20.0"
-                                                  stylesheets="@SIMP.css" toggleGroup="$group1">
+                                    <ToggleButton fx:id="insertText" prefHeight="20.0" prefWidth="20.0" stylesheets="@SIMP.css" toggleGroup="$group1">
                                         <HBox.margin>
-                                            <Insets left="5.0"/>
+                                            <Insets left="5.0" />
                                         </HBox.margin>
                                     </ToggleButton>
                                 </children>
                             </HBox>
-                            <Label alignment="CENTER" opacity="0.6" prefHeight="17.0" prefWidth="95.0" text="Tools"/>
+                            <Label alignment="CENTER" opacity="0.6" prefHeight="17.0" prefWidth="95.0" text="Tools" />
                         </children>
                         <padding>
-                            <Insets right="5.0"/>
+                            <Insets right="5.0" />
                         </padding>
                     </VBox>
                     <VBox layoutX="331.0" layoutY="10.0">
                         <children>
                             <HBox>
                                 <children>
-                                    <ToggleButton fx:id="straightLine" prefHeight="20.0" prefWidth="20.0"
-                                                  stylesheets="@SIMP.css" toggleGroup="$group1">
+                                    <ToggleButton fx:id="straightLine" prefHeight="20.0" prefWidth="20.0" stylesheets="@SIMP.css" toggleGroup="$group1">
                                         <HBox.margin>
-                                            <Insets/>
+                                            <Insets />
                                         </HBox.margin>
                                     </ToggleButton>
-                                    <ToggleButton fx:id="rectangle" prefHeight="20.0" prefWidth="20.0"
-                                                  stylesheets="@SIMP.css" toggleGroup="$group1">
+                                    <ToggleButton fx:id="rectangle" prefHeight="20.0" prefWidth="20.0" stylesheets="@SIMP.css" toggleGroup="$group1">
                                         <HBox.margin>
-                                            <Insets left="5.0"/>
+                                            <Insets left="5.0" />
                                         </HBox.margin>
                                     </ToggleButton>
-                                    <ToggleButton fx:id="circle" prefHeight="20.0" prefWidth="20.0"
-                                                  stylesheets="@SIMP.css" toggleGroup="$group1">
+                                    <ToggleButton fx:id="circle" prefHeight="20.0" prefWidth="20.0" stylesheets="@SIMP.css" toggleGroup="$group1">
                                         <HBox.margin>
-                                            <Insets left="5.0"/>
+                                            <Insets left="5.0" />
                                         </HBox.margin>
                                     </ToggleButton>
                                 </children>
                             </HBox>
-                            <Label alignment="CENTER" opacity="0.6" prefHeight="17.0" prefWidth="70.0" text="Shapes"/>
+                            <Label alignment="CENTER" opacity="0.6" prefHeight="17.0" prefWidth="70.0" text="Shapes" />
                         </children>
                     </VBox>
                 </HBox>
@@ -151,6 +135,10 @@
         </VBox>
     </top>
     <center>
-        <Canvas fx:id="canvas" height="504" width="896" BorderPane.alignment="CENTER"/>
+      <StackPane fx:id="canvasBackground" stylesheets="@SIMP.css" BorderPane.alignment="CENTER">
+         <children>
+              <Canvas fx:id="canvas" height="504" width="896" />
+         </children>
+      </StackPane>
     </center>
 </BorderPane>
