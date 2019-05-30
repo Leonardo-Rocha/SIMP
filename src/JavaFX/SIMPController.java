@@ -32,7 +32,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * SIMPController controls all interactions between the user and the GUI.
+ * @author Leonardo-Rocha, GabrielChiquetto
+ */
 public class SIMPController {
 
     /**
@@ -275,6 +278,7 @@ public class SIMPController {
 
     /**
      * New button action. Ask the user to save or not the current changes and then clear the canvas.
+     * @param actionEvent onAction event.
      */
     public void onNew(ActionEvent actionEvent) {
         //TODO implement logic - if there's an open file ask to save changes or not before clearing the canvas.
@@ -283,6 +287,7 @@ public class SIMPController {
 
     /**
      * Open button action. Opens the file chooser and draw the chosen image in the canvas.
+     * @param actionEvent onAction event.
      */
     public void onOpen(ActionEvent actionEvent) {
         try {
@@ -440,6 +445,7 @@ public class SIMPController {
 
     /**
      * Log of recent files.
+     * @return Map of the recent files.
      */
     public Map<String, File> getRecentFiles() {
         return recentFiles;

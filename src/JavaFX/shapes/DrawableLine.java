@@ -7,28 +7,31 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 import javafx.util.Pair;
 
-
+/**
+ * DrawableLine implements the Drawable interface. It`s used to implement the mouse related events.
+ * @author Leonardo-Rocha, GabrielChiquetto
+ */
 public class DrawableLine implements Drawable {
     private Canvas canvas;
     Line line;
     GraphicsContext graphicsContext;
     private Pair<Double, Double> initialPressCoordinate;
-    
-	
-	@Override
-	public void onMouseDragged(MouseEvent event) {
-		
-	}
-	
-	@Override
-	public void onMouseReleased(MouseEvent event) {
 
-	}
 
-	@Override
-	public Shape getShape() {
-		return null;
-	}
+    @Override
+    public void onMouseDragged(MouseEvent event) {
+
+    }
+
+    @Override
+    public void onMouseReleased(MouseEvent event) {
+
+    }
+
+    @Override
+    public Shape getShape() {
+        return null;
+    }
 
     /*public DrawableLine(Stage primaryStage, GraphicsContext graphicsContext, double x, double y) {
         this.graphicsContext = graphicsContext;

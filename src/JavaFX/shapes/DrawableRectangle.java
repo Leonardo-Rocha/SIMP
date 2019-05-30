@@ -7,37 +7,41 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.util.Pair;
 
+/**
+ * DrawableRectangle implements the Drawable interface. It`s used to implement the mouse related events.
+ * @author Leonardo-Rocha, GabrielChiquetto
+ */
 public class DrawableRectangle implements Drawable {
-	
-	private Double width;
-	private Double height;
-    private Pair<Double, Double> initialPressCoordinate; 
-	private Rectangle rectangle; 
-	private Color color;
-	
-	public DrawableRectangle(Double x, Double y, Color color) {
-		initialPressCoordinate = new Pair<> (x,y); 
-		rectangle = new Rectangle(x, y);
-		rectangle.setFill(color);
-	}
-	
-	@Override
-	public void onMouseDragged(MouseEvent event) {
-		double x = initialPressCoordinate.getKey();
-		double y = initialPressCoordinate.getValue();
-		width = event.getX() - x;
-		height = event.getY() - y;
-		rectangle.setWidth(width);
-		rectangle.setHeight(height);
-	}
+
+    private Double width;
+    private Double height;
+    private Pair<Double, Double> initialPressCoordinate;
+    private Rectangle rectangle;
+    private Color color;
+
+    public DrawableRectangle(Double x, Double y, Color color) {
+        initialPressCoordinate = new Pair<>(x, y);
+        rectangle = new Rectangle(x, y);
+        rectangle.setFill(color);
+    }
+
+    @Override
+    public void onMouseDragged(MouseEvent event) {
+        double x = initialPressCoordinate.getKey();
+        double y = initialPressCoordinate.getValue();
+        width = event.getX() - x;
+        height = event.getY() - y;
+        rectangle.setWidth(width);
+        rectangle.setHeight(height);
+    }
 
 
-	@Override
-	public void onMouseReleased(MouseEvent event) {
-	}
+    @Override
+    public void onMouseReleased(MouseEvent event) {
+    }
 
-	@Override
-	public Shape getShape() {
-		return rectangle;
-	}
+    @Override
+    public Shape getShape() {
+        return rectangle;
+    }
 }

@@ -11,10 +11,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * Utilities class. It wraps some useful methods that are used by two or more classes.
+ * @author Leonardo-Rocha
+ */
 public class Utils {
 
     private static final String PROPERTIES_PATH = "/config.properties";
@@ -33,6 +36,7 @@ public class Utils {
      * Config canvas automatic resize according to root size.
      *
      * @param primaryStage stage reference.
+     * @param canvas reference of the cangas to config automatic resize.
      */
     public static void configCanvasResize(Stage primaryStage, Canvas canvas) {
         canvas.widthProperty().bind(primaryStage.widthProperty());
@@ -104,15 +108,16 @@ public class Utils {
     /**
      * Add a new file to configuration file.
      *
-     * @param newFile
+     * @param newFile file reference to be added.
+     * @throws IOException if an error occurs during file writing.
      */
     public static void addFileToProperties(File newFile) throws IOException {
 
-        if (newFile != null && !recentFiles.containsKey(newFile.getName())){
+        if (newFile != null && !recentFiles.containsKey(newFile.getName())) {
             properties.setProperty("recentFile" + ++lastValidIndex, newFile.getAbsolutePath());
             recentFiles.put(newFile.getName(), newFile);
             properties.store(new FileOutputStream(configFile), "");
-        } else{
+        } else {
             System.out.println("File == null or key already inserted in map.");
         }
     }

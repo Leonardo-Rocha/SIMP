@@ -3,6 +3,10 @@ package JavaFX.shapes;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Shape;
 
+/**
+ * Drawable interface. Defines the mouse related events.
+ * @author Leonardo-Rocha, GabrielChiquetto
+ */
 public interface Drawable {
 
 	public void onMouseDragged(MouseEvent event);

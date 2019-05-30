@@ -6,23 +6,32 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.File;
-import java.util.Map;
-
+/**
+ * Main application class. Used to wrap things up and launch the application.
+ * @author Leonardo-Rocha
+ */
 public class Main extends Application {
 
-    /** Scene preferred width. */
+    /**
+     * Scene preferred width.
+     */
     public static final double WIDTH = 896;
-    /** Scene preferred height. */
+    /**
+     * Scene preferred height.
+     */
     public static final double HEIGHT = 504;
-    /** Application title. */
+    /**
+     * Application title.
+     */
     private static final String TITLE = "SIMP";
 
-    /** Controller reference. */
+    /**
+     * Controller reference.
+     */
     SIMPController controller;
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/JavaFX/SIMP.fxml"));
         Parent root = loader.load();
         controller = loader.getController();
