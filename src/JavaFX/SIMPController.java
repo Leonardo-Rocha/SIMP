@@ -28,12 +28,18 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static javax.swing.JOptionPane.NO_OPTION;
+import static javax.swing.JOptionPane.YES_NO_CANCEL_OPTION;
+import static javax.swing.JOptionPane.YES_OPTION;
+
 /**
  * SIMPController controls all interactions between the user and the GUI.
+ *
  * @author Leonardo-Rocha, GabrielChiquetto
  */
 public class SIMPController {
@@ -63,13 +69,13 @@ public class SIMPController {
     private Button redo;
 
     /**
-     * FXML BrushSize insertText field.
+     * FXML BrushSize Slider.
      */
     @FXML
     private Slider brushSizeSlider;
 
     /**
-     * FXML BrushSize insertText field.
+     * FXML BrushSize Text field.
      */
     @FXML
     private TextField brushSizeText;
@@ -168,7 +174,6 @@ public class SIMPController {
     public void initialize() {
         previousMove = new ArrayList<>();
         nextMove = new ArrayList<>();
-
         graphicsContext = canvas.getGraphicsContext2D();
         canvas.setOnDragDetected(e -> canvas.startFullDrag());
         //Starts the app with the pencil selected.
@@ -176,6 +181,9 @@ public class SIMPController {
         onBrushSizeTextChanged();
         graphicsContext.setLineCap(StrokeLineCap.ROUND);
         graphicsContext.setLineJoin(StrokeLineJoin.ROUND);
+
+        //Bind brushSizeSlider to text.
+        brushSizeSlider.valueProperty().addListener(e -> onBrushSizeSliderChanged());
 
         //OnMouseDragged lambda.
         canvas.setOnMouseDragged(e -> {
@@ -240,7 +248,7 @@ public class SIMPController {
 
         fileChooser = new FileChooser();
         setExtensionFilters();
-
+        currentFile = new File("Untitled");
     }
 
     public void setupRecentFilesMenu() {
@@ -278,15 +286,30 @@ public class SIMPController {
 
     /**
      * New button action. Ask the user to save or not the current changes and then clear the canvas.
+     *
      * @param actionEvent onAction event.
      */
     public void onNew(ActionEvent actionEvent) {
-        //TODO implement logic - if there's an open file ask to save changes or not before clearing the canvas.
+        if (currentFile != null) {
+            int answer = JOptionPane.showConfirmDialog(null,
+                    "Do you want to save changes to the open file? ",
+                    "SIMP", YES_NO_CANCEL_OPTION);
+            if (answer == YES_OPTION) {
+                onSaveAs();
+                clearCanvas();
+            } else if (answer == NO_OPTION) {
+                clearCanvas();
+            }
+        }
+    }
+
+    private void clearCanvas() {
         graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
     /**
      * Open button action. Opens the file chooser and draw the chosen image in the canvas.
+     *
      * @param actionEvent onAction event.
      */
     public void onOpen(ActionEvent actionEvent) {
@@ -303,10 +326,10 @@ public class SIMPController {
         BufferedImage bufferedImage;
         Image image;
         if (file != null) {
-            //TODO wrap canvas in a scrollpane to fit images bigger than the canvas.
+            clearCanvas();
             bufferedImage = ImageIO.read(file);
             image = SwingFXUtils.toFXImage(bufferedImage, null);
-            graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+            clearCanvas();
             graphicsContext.drawImage(image, 0, 0);
             Utils.addFileToProperties(file);
             setupRecentFilesMenu();
@@ -337,7 +360,6 @@ public class SIMPController {
      */
     public void onSaveAs() {
         try {
-            //TODO change this parameters to allow a file overwrite.
             Image snapshot = canvas.snapshot(null, null);
             fileChooser.setTitle("Save As");
             currentFile = fileChooser.showSaveDialog(primaryStage);
@@ -383,10 +405,9 @@ public class SIMPController {
      * Brush Size Slider action. Updates the text according to the slider value.
      */
     public void onBrushSizeSliderChanged() {
-        //TODO enhance this method - format the insertText(clamp dot) and bind the method to correct slider actions.
         double value = brushSizeSlider.getValue();
-        String text = String.valueOf(value);
-        brushSizeText.setText(text);
+        DecimalFormat df = new DecimalFormat("#");
+        brushSizeText.setText(df.format(value));
     }
 
     /**
@@ -445,6 +466,7 @@ public class SIMPController {
 
     /**
      * Log of recent files.
+     *
      * @return Map of the recent files.
      */
     public Map<String, File> getRecentFiles() {
