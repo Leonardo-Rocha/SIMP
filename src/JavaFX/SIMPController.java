@@ -170,7 +170,7 @@ public class SIMPController {
 
     /**
      * Special signature method initialize. Instantiates some variables and bind the mouse actions.
-     */
+     */ //TODO Refactor duplicated code.
     public void initialize() {
         previousMove = new ArrayList<>();
         nextMove = new ArrayList<>();
@@ -189,8 +189,8 @@ public class SIMPController {
         canvas.setOnMouseDragged(e -> {
             //TODO draw in different layers.
             double size = brushSizeSlider.getValue();
-            double x = e.getX() - size / 2;
-            double y = e.getY() - size / 2;
+            double x = e.getX();// - size / 2;
+            double y = e.getY();// - size / 2;
             Color color = colorPicker.getValue();
             graphicsContext.setLineWidth(size);
             if (pencil.isSelected()) {
@@ -205,22 +205,21 @@ public class SIMPController {
                 graphicsContext.clearRect(x, y, size, size);
                 addDrawAction(null, size, x, y);
             } else if (straightLine.isSelected()) {
-
-            } else if (rectangle.isSelected()) {
+                graphicsContext.moveTo(x, y);
                 drawable.onMouseDragged(e);
-                Rectangle rect = (Rectangle) drawable.getShape();
-                graphicsContext.setFill(rect.getFill());
-                graphicsContext.fillRect(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
-
+            } else if (rectangle.isSelected()) {
+                graphicsContext.moveTo(x, y);
+                drawable.onMouseDragged(e);
             } else if (circle.isSelected()) {
-
+                graphicsContext.moveTo(x, y);
+                drawable.onMouseDragged(e);
             }
         });
 
         //onMouseClicked lambda
         canvas.setOnMousePressed(e -> {
-            double x = e.getX() - brushSizeSlider.getValue() / 2;
-            double y = e.getY() - brushSizeSlider.getValue() / 2;
+            double x = e.getX();// - brushSizeSlider.getValue() / 2;
+            double y = e.getY();// - brushSizeSlider.getValue() / 2;
             Color color = colorPicker.getValue();
             //TODO make these actions to support undo/redo
             if (pencil.isSelected()) {
@@ -235,16 +234,40 @@ public class SIMPController {
                 graphicsContext.setFill(color);
                 graphicsContext.fillText(input, x, y);
             } else if (straightLine.isSelected()) {
-
+                graphicsContext.beginPath();
+                graphicsContext.moveTo(x, y);
+                drawable = new DrawableLine(graphicsContext, x, y, color );
             } else if (rectangle.isSelected()) {
-                drawable = new DrawableRectangle(x, y, color);
+                graphicsContext.beginPath();
+                graphicsContext.moveTo(x, y);
+                drawable = new DrawableRectangle(x, y, color, graphicsContext);
             } else if (circle.isSelected()) {
-
+                graphicsContext.beginPath();
+                graphicsContext.moveTo(x, y);
+                drawable = new DrawableEllipse(x, y, graphicsContext, color);
             }
         });
 
         canvas.setOnMouseDragEntered(e -> nextMove.clear());
         canvas.setOnMouseDragReleased(e -> previousMove = nextMove);
+
+        canvas.setOnMouseDragReleased(e -> {
+            if (drawable != null)
+                if (rectangle.isSelected()) {
+                    drawable.onMouseReleased(e);
+                    graphicsContext.closePath();
+                    graphicsContext.beginPath();
+                } else if(circle.isSelected()){
+                    drawable.onMouseReleased(e);
+                    graphicsContext.closePath();
+                    graphicsContext.beginPath();
+                } else if(straightLine.isSelected()){
+                    drawable.onMouseReleased(e);
+                    graphicsContext.closePath();
+                    graphicsContext.beginPath();
+                }
+        });
+
 
         fileChooser = new FileChooser();
         setExtensionFilters();

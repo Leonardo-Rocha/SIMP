@@ -9,6 +9,8 @@ import javafx.scene.shape.Shape;
  */
 public interface Drawable {
 
+	public void draw();
+
 	public void onMouseDragged(MouseEvent event);
 	
 	public void onMouseReleased(MouseEvent event);

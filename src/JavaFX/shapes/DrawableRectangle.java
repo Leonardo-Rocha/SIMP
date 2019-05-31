@@ -11,37 +11,73 @@ import javafx.util.Pair;
  * DrawableRectangle implements the Drawable interface. It`s used to implement the mouse related events.
  * @author Leonardo-Rocha, GabrielChiquetto
  */
-public class DrawableRectangle implements Drawable {
+public class DrawableRectangle extends Rectangle implements Drawable {
 
-    private Double width;
-    private Double height;
+    private GraphicsContext canvasReference;
+    private boolean isFilled = true; // TODO implement button to select this boolean.
     private Pair<Double, Double> initialPressCoordinate;
-    private Rectangle rectangle;
-    private Color color;
 
-    public DrawableRectangle(Double x, Double y, Color color) {
+    public DrawableRectangle(Double x, Double y, Color color, GraphicsContext canvasReference) {
+        super(x, y, 0 , 0);
         initialPressCoordinate = new Pair<>(x, y);
-        rectangle = new Rectangle(x, y);
-        rectangle.setFill(color);
+        setFill(color);
+        setStroke(color);
+        this.canvasReference = canvasReference;
     }
 
     @Override
     public void onMouseDragged(MouseEvent event) {
-        double x = initialPressCoordinate.getKey();
-        double y = initialPressCoordinate.getValue();
-        width = event.getX() - x;
-        height = event.getY() - y;
-        rectangle.setWidth(width);
-        rectangle.setHeight(height);
+        Double x = event.getX();
+        Double y = event.getY();
+        originRelativeOrientation(x, y);
+        //draw();
     }
 
+    private void originRelativeOrientation(Double x, Double y){
+
+        if(x >= initialPressCoordinate.getKey()) {
+            setWidth(x - this.getX());
+
+        }else {
+            setWidth(initialPressCoordinate.getKey() - x);
+            this.setX(x);
+
+        }
+        if(y >= initialPressCoordinate.getValue()) {
+            setHeight(y - this.getY());
+
+        }else{
+            setHeight(initialPressCoordinate.getValue() - y);
+            this.setY(y);
+        }
+    }
+
+    @Override
+    public void draw(){
+         if(isFilled){
+             canvasReference.setFill(getFill());
+             canvasReference.fillRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+         }else{
+             canvasReference.setStroke(getStroke());
+             canvasReference.strokeRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+         }
+    }
 
     @Override
     public void onMouseReleased(MouseEvent event) {
+        draw();
     }
 
     @Override
     public Shape getShape() {
-        return rectangle;
+        return this;
+    }
+
+    public void setToFill(boolean b){
+        isFilled = b;
+    }
+
+    public void setToFill(){
+        setToFill(true);
     }
 }
