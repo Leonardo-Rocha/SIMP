@@ -140,7 +140,7 @@
          <content>
             <StackPane fx:id="canvasBackground">
                <children>
-                      <Canvas fx:id="canvas" height="504" width="896" />
+                      <Canvas fx:id="mainCanvas" height="504" width="896" />
                </children>
             </StackPane>
          </content>

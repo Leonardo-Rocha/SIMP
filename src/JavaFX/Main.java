@@ -38,13 +38,14 @@ public class Main extends Application {
         controller.setRecentFiles(Utils.readPropertiesFile());
         controller.setPrimaryStage(primaryStage);
         controller.setupRecentFilesMenu();
+        Utils.configCanvasResize(primaryStage, controller.getMainCanvas());
+        Utils.configCanvasResize(primaryStage, controller.getTempCanvas());
 
         primaryStage.setTitle(TITLE);
         primaryStage.setScene(new Scene(root, WIDTH, HEIGHT));
 
-        Utils.configCanvasResize(primaryStage, controller.getCanvas());
-
         primaryStage.show();
+
     }
 
     public static void main(String[] args) {

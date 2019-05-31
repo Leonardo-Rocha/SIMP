@@ -16,6 +16,8 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
@@ -45,13 +47,21 @@ import static javax.swing.JOptionPane.YES_OPTION;
 public class SIMPController {
 
     /**
+     * FXML StackPane to hold tempCanvas.
+     */
+    @FXML
+    private StackPane canvasBackground;
+
+    /**
      * FXML Canvas.
      */
     @FXML
-    private Canvas canvas;
+    private Canvas mainCanvas;
+
+    private Canvas tempCanvas;
 
     /**
-     *
+     * FXML menu of recent files.
      */
     @FXML
     private Menu recentFilesMenu;
@@ -168,14 +178,20 @@ public class SIMPController {
      */
     private Drawable drawable;
 
+    WritableImage writableImage;
+
     /**
      * Special signature method initialize. Instantiates some variables and bind the mouse actions.
      */ //TODO Refactor duplicated code.
     public void initialize() {
         previousMove = new ArrayList<>();
         nextMove = new ArrayList<>();
-        graphicsContext = canvas.getGraphicsContext2D();
-        canvas.setOnDragDetected(e -> canvas.startFullDrag());
+        tempCanvas = new Canvas(Main.WIDTH, Main.HEIGHT);
+        canvasBackground.getChildren().add(tempCanvas);
+
+        graphicsContext = tempCanvas.getGraphicsContext2D();
+
+        tempCanvas.setOnDragDetected(e -> tempCanvas.startFullDrag());
         //Starts the app with the pencil selected.
         pencil.setSelected(true);
         onBrushSizeTextChanged();
@@ -186,7 +202,7 @@ public class SIMPController {
         brushSizeSlider.valueProperty().addListener(e -> onBrushSizeSliderChanged());
 
         //OnMouseDragged lambda.
-        canvas.setOnMouseDragged(e -> {
+        tempCanvas.setOnMouseDragged(e -> {
             //TODO draw in different layers.
             double size = brushSizeSlider.getValue();
             double x = e.getX();// - size / 2;
@@ -217,9 +233,20 @@ public class SIMPController {
         });
 
         //onMouseClicked lambda
+<<<<<<< HEAD
         canvas.setOnMousePressed(e -> {
             double x = e.getX();// - brushSizeSlider.getValue() / 2;
             double y = e.getY();// - brushSizeSlider.getValue() / 2;
+=======
+        tempCanvas.setOnMousePressed(e -> {
+            writableImage = new WritableImage((int)mainCanvas.getWidth(), (int)mainCanvas.getHeight());
+            tempCanvas.snapshot(null, writableImage);
+            GraphicsContext gc = mainCanvas.getGraphicsContext2D();
+            gc.drawImage(writableImage, mainCanvas.getWidth(), mainCanvas.getHeight());
+
+            double x = e.getX() - brushSizeSlider.getValue() / 2;
+            double y = e.getY() - brushSizeSlider.getValue() / 2;
+>>>>>>> origin/feature/undo
             Color color = colorPicker.getValue();
             //TODO make these actions to support undo/redo
             if (pencil.isSelected()) {
@@ -248,8 +275,12 @@ public class SIMPController {
             }
         });
 
-        canvas.setOnMouseDragEntered(e -> nextMove.clear());
-        canvas.setOnMouseDragReleased(e -> previousMove = nextMove);
+        tempCanvas.setOnMouseDragEntered(e -> {
+            //nextMove.clear()
+        });
+        tempCanvas.setOnMouseDragReleased(e -> {
+            //previousMove = nextMove;
+        });
 
         canvas.setOnMouseDragReleased(e -> {
             if (drawable != null)
@@ -308,7 +339,7 @@ public class SIMPController {
     }
 
     /**
-     * New button action. Ask the user to save or not the current changes and then clear the canvas.
+     * New button action. Ask the user to save or not the current changes and then clear the tempCanvas.
      *
      * @param actionEvent onAction event.
      */
@@ -319,19 +350,19 @@ public class SIMPController {
                     "SIMP", YES_NO_CANCEL_OPTION);
             if (answer == YES_OPTION) {
                 onSaveAs();
-                clearCanvas();
+                clearTempCanvas();
             } else if (answer == NO_OPTION) {
-                clearCanvas();
+                clearTempCanvas();
             }
         }
     }
 
-    private void clearCanvas() {
-        graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+    private void clearTempCanvas() {
+        graphicsContext.clearRect(0, 0, tempCanvas.getWidth(), tempCanvas.getHeight());
     }
 
     /**
-     * Open button action. Opens the file chooser and draw the chosen image in the canvas.
+     * Open button action. Opens the file chooser and draw the chosen image in the tempCanvas.
      *
      * @param actionEvent onAction event.
      */
@@ -349,10 +380,10 @@ public class SIMPController {
         BufferedImage bufferedImage;
         Image image;
         if (file != null) {
-            clearCanvas();
+            clearTempCanvas();
             bufferedImage = ImageIO.read(file);
             image = SwingFXUtils.toFXImage(bufferedImage, null);
-            clearCanvas();
+            clearTempCanvas();
             graphicsContext.drawImage(image, 0, 0);
             Utils.addFileToProperties(file);
             setupRecentFilesMenu();
@@ -366,7 +397,7 @@ public class SIMPController {
     public void onSave() {
         if (currentFile != null) {
             try {
-                Image snapshot = canvas.snapshot(null, null);
+                Image snapshot = tempCanvas.snapshot(null, null);
                 ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), getFileFormat(), currentFile);
                 Utils.addFileToProperties(currentFile);
                 setupRecentFilesMenu();
@@ -383,7 +414,7 @@ public class SIMPController {
      */
     public void onSaveAs() {
         try {
-            Image snapshot = canvas.snapshot(null, null);
+            Image snapshot = tempCanvas.snapshot(null, null);
             fileChooser.setTitle("Save As");
             currentFile = fileChooser.showSaveDialog(primaryStage);
             if (currentFile != null) {
@@ -408,10 +439,11 @@ public class SIMPController {
      * Undo button action. Undo the last draw movement.
      */
     public void onUndo() {
-        //TODO enhance this using 2 canvas.
-        for (DrawAction drawAction : previousMove) {
-            graphicsContext.clearRect(drawAction.x, drawAction.y, drawAction.size, drawAction.size);
-        }
+        //TODO enhance this using 2 tempCanvas.
+        //for (DrawAction drawAction : previousMove) {
+        //    graphicsContext.clearRect(drawAction.x, drawAction.y, drawAction.size, drawAction.size);
+        //}
+        clearTempCanvas();
     }
 
     /**
@@ -461,21 +493,12 @@ public class SIMPController {
      *
      * @param fillColor color set on the ColorPicker.
      * @param size      size of the rectangle.
-     * @param x         position x of the rectangle in the canvas.
-     * @param y         position y of the rectangle in the canvas.
+     * @param x         position x of the rectangle in the tempCanvas.
+     * @param y         position y of the rectangle in the tempCanvas.
      */
     public void addDrawAction(Color fillColor, double size, double x, double y) {
         DrawAction drawAction = new DrawAction(fillColor, size, x, y);
         nextMove.add(drawAction);
-    }
-
-    /**
-     * Canvas getter.
-     *
-     * @return canvas.
-     */
-    public Canvas getCanvas() {
-        return canvas;
     }
 
     /**
@@ -498,5 +521,21 @@ public class SIMPController {
 
     public void setRecentFiles(Map<String, File> recentFiles) {
         this.recentFiles = recentFiles;
+    }
+
+    public Canvas getMainCanvas() {
+        return mainCanvas;
+    }
+
+    public void setMainCanvas(Canvas mainCanvas) {
+        this.mainCanvas = mainCanvas;
+    }
+
+    public Canvas getTempCanvas() {
+        return tempCanvas;
+    }
+
+    public void setTempCanvas(Canvas tempCanvas) {
+        this.tempCanvas = tempCanvas;
     }
 }
