@@ -14,7 +14,7 @@ import javafx.util.Pair;
 public class DrawableRectangle extends Rectangle implements Drawable {
 
     private GraphicsContext canvasReference;
-    private boolean isFilled = true; // TODO implement button to select this boolean.
+    private boolean isFilled = false; // TODO implement button to select this boolean.
     private Pair<Double, Double> initialPressCoordinate;
 
     public DrawableRectangle(Double x, Double y, Color color, GraphicsContext canvasReference) {

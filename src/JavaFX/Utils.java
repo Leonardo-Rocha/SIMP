@@ -72,7 +72,7 @@ public class Utils {
         recentFiles = new HashMap<>();
         try {
             // Find document folder and write file inside
-            configFile = new File(System.getenv("HOMEPATH") + PROPERTIES_PATH);
+            configFile = new File(System.getProperty("user.home") + PROPERTIES_PATH);
             if (!configFile.exists() || configFile.length() <= 0) {
                 createPropertiesFile(recentFiles);
                 return recentFiles;
@@ -81,9 +81,6 @@ public class Utils {
             }
 
             FileInputStream fileLoaded = new FileInputStream(configFile);
-
-            if (fileLoaded == null)
-                throw new IOException("Error while reading file.");
 
             properties.load(fileLoaded);
 

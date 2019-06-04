@@ -10,7 +10,7 @@ import javafx.util.Pair;
 public class DrawableEllipse extends Ellipse implements Drawable{
 
     private GraphicsContext canvasReference;
-    private boolean isFilled = true;
+    private boolean isFilled = false;
     private Pair<Double, Double> initialPressCoordinate;
 
     public DrawableEllipse(Double centerX, Double centerY, GraphicsContext canvasReference, Color color){
@@ -32,9 +32,7 @@ public class DrawableEllipse extends Ellipse implements Drawable{
 
 
     @Override
-    public void draw() {
-        System.out.println("is attempting to draw.");
-        System.out.println("Circle stats cx:" + getCenterX() + "cy:" + getCenterY() + "rx:" + getRadiusX() + "ry:" + getRadiusY());
+    public void draw() {        
         if (isFilled){
             canvasReference.setFill(getFill());
             canvasReference.fillOval(getCenterX(), getCenterY(), 2*getRadiusX(), 2*getRadiusY());
