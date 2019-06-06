@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 
 /**
  * Main application class. Used to wrap things up and launch the application.
- * @author Leonardo-Rocha
+ * @author Leonardo-Rocha, Gabriel Chiquetto.
  */
 public class Main extends Application {
 
@@ -48,7 +48,9 @@ public class Main extends Application {
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         launch(args);
     }
 }
+

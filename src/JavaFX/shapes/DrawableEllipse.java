@@ -69,10 +69,6 @@ public class DrawableEllipse extends Ellipse implements Drawable{
         draw();
     }
 
-    @Override
-    public Shape getShape() {
-        return this;
-    }
 
     public void setToFill(boolean b){
         isFilled = b;

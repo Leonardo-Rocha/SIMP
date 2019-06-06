@@ -42,10 +42,6 @@ public class DrawableLine extends Line implements Drawable {
         draw();
     }
 
-    @Override
-    public Shape getShape() {
-        return this;
-    }
 
 
 

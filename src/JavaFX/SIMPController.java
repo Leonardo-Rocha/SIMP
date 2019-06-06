@@ -5,20 +5,13 @@ import JavaFX.shapes.*;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.StackPane;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
@@ -42,97 +35,9 @@ import static javax.swing.JOptionPane.YES_OPTION;
  *
  * @author Leonardo-Rocha, GabrielChiquetto
  */
-public class SIMPController {
+public class SIMPController extends FXMLController{
 
-    /**
-     * FXML StackPane to hold tempCanvas.
-     */
-    @FXML
-    private StackPane canvasBackground;
 
-    /**
-     * FXML Canvas.
-     */
-    @FXML
-    private Canvas mainCanvas;
-
-    /**
-     * FXML menu of recent files.
-     */
-    @FXML
-    private Menu recentFilesMenu;
-
-    /**
-     * FXML Undo button.
-     */
-    @FXML
-    private Button undo;
-
-    /**
-     * FXML Redo button.
-     */
-    @FXML
-    private Button redo;
-
-    /**
-     * FXML BrushSize Slider.
-     */
-    @FXML
-    private Slider brushSizeSlider;
-
-    /**
-     * FXML BrushSize Text field.
-     */
-    @FXML
-    private TextField brushSizeText;
-
-    /**
-     * FXML Color picker.
-     */
-    @FXML
-    private ColorPicker colorPicker;
-
-    /**
-     * FXML pencil toggle button.
-     */
-    @FXML
-    private ToggleButton pencil;
-
-    /**
-     * FXML eraser toggle button.
-     */
-    @FXML
-    private ToggleButton eraser;
-
-    /**
-     * FXML fillColor toggle button.
-     */
-    @FXML
-    private ToggleButton fillColor;
-
-    /**
-     * FXML insertText toggle button.
-     */
-    @FXML
-    private ToggleButton insertText;
-
-    /**
-     * FXML straightLine toggle button.
-     */
-    @FXML
-    public ToggleButton straightLine;
-
-    /**
-     * FXML square toggle button.
-     */
-    @FXML
-    public ToggleButton rectangle;
-
-    /**
-     * FXML circle toggle button.
-     */
-    @FXML
-    public ToggleButton circle;
 
     /**
      * Canvas graphicsContext.
@@ -159,22 +64,23 @@ public class SIMPController {
      */
     private File currentFile;
 
-
     /**
      * Drawable shape interface.
      */
     private Drawable drawable;
 
+    private Brush brush;
+
     /**
      * A Writable image to print the temporary canvas undo history.
      */
     WritableImage undoSnapshot;
-    
+
     /**
      * A Writable image to print the temporary canvas redo history.
      */
     WritableImage redoSnapshot;
-    
+
     /**
      * Special signature method initialize. Instantiates some variables and bind the mouse actions.
      */ //TODO Refactor duplicated code.
@@ -197,8 +103,8 @@ public class SIMPController {
         mainCanvas.setOnMouseDragged(e -> {
             //TODO draw in different layers.
             double size = brushSizeSlider.getValue();
-            double x = e.getX();// - size / 2;
-            double y = e.getY();// - size / 2;
+            double x = e.getX();
+            double y = e.getY();
             Color color = colorPicker.getValue();
             graphicsContext.setLineWidth(size);
             if (pencil.isSelected()) {
@@ -209,14 +115,13 @@ public class SIMPController {
                 graphicsContext.beginPath();
                 graphicsContext.moveTo(x, y);
             } else if (eraser.isSelected()) {
-                graphicsContext.clearRect(x, y, size, size);
-            } else if (straightLine.isSelected()) {
+                graphicsContext.setStroke(Color.WHITE);
+                graphicsContext.lineTo(x, y);
+                graphicsContext.stroke();
+                graphicsContext.closePath();
+                graphicsContext.beginPath();
                 graphicsContext.moveTo(x, y);
-                drawable.onMouseDragged(e);
-            } else if (rectangle.isSelected()) {
-                graphicsContext.moveTo(x, y);
-                drawable.onMouseDragged(e);
-            } else if (circle.isSelected()) {
+            } else if (shapeSelected()) {
                 graphicsContext.moveTo(x, y);
                 drawable.onMouseDragged(e);
             }
@@ -224,72 +129,74 @@ public class SIMPController {
 
         //onMouseClicked lambda
         mainCanvas.setOnMousePressed(e -> {
-            takeSnapshot(undoSnapshot);
-            
+            try {
+                undoSnapshot = takeSnapshot();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
             double x = e.getX();
             double y = e.getY();
             Color color = colorPicker.getValue();
             if (pencil.isSelected()) {
-                graphicsContext.moveTo(x, y);
-                graphicsContext.stroke();
-            } else if (fillColor.isSelected()) {
-                //TODO fillColor logic
+                brush = new Pencil(x, y, color, graphicsContext);
+                brush.onMousePressed(e);
+            }else if(eraser.isSelected()){
+                brush = new Pencil(x, y, Color.WHITE, graphicsContext);
+                brush.onMousePressed(e);
+            }else if (fillColor.isSelected()) {
+                BucketPainter painter = new BucketPainter(x, y, color, undoSnapshot);
+                printInCanvas(painter.paint());
             } else if (insertText.isSelected()) {
                 //TODO improve this input dialog - add title, icon, etc.
                 String input = JOptionPane.showInputDialog("Enter insertText: ");
                 //TODO add textSize and alignment.
                 graphicsContext.setFill(color);
                 graphicsContext.fillText(input, x, y);
-            } else if (straightLine.isSelected()) {
-                graphicsContext.beginPath();
-                graphicsContext.moveTo(x, y);
-                drawable = new DrawableLine(graphicsContext, x, y, color );
-            } else if (rectangle.isSelected()) {
-                graphicsContext.beginPath();
-                graphicsContext.moveTo(x, y);
-                drawable = new DrawableRectangle(x, y, color, graphicsContext);
-            } else if (circle.isSelected()) {
-                graphicsContext.beginPath();
-                graphicsContext.moveTo(x, y);
-                drawable = new DrawableEllipse(x, y, graphicsContext, color);
+            } else if(shapeSelected()){
+                createDrawableShape(x, y, color);
             }
         });
 
-        mainCanvas.setOnMouseDragEntered(e -> {
-            //nextMove.clear()
-        });
-
-        mainCanvas.setOnMouseDragReleased(e -> {
-            if (drawable != null) {
-                if (rectangle.isSelected()) {
-                    drawable.onMouseReleased(e);
-                    graphicsContext.closePath();
-                    graphicsContext.beginPath();
-                } else if(circle.isSelected()){
-                    drawable.onMouseReleased(e);
-                    graphicsContext.closePath();
-                    graphicsContext.beginPath();
-                } else if(straightLine.isSelected()){
-                    drawable.onMouseReleased(e);
-                    graphicsContext.closePath();
-                    graphicsContext.beginPath();
-                }
-            }
-        });
-
+        mainCanvas.setOnMouseDragReleased(this::attemptDraw);
 
         fileChooser = new FileChooser();
         setExtensionFilters();
         currentFile = new File("Untitled");
     }
 
-	/**
+    private void createDrawableShape(double x, double y, Color color) {
+        if (straightLine.isSelected()) {
+            graphicsContext.beginPath();
+            graphicsContext.moveTo(x, y);
+            drawable = new DrawableLine(graphicsContext, x, y, color );
+        } else if (rectangle.isSelected()) {
+            graphicsContext.beginPath();
+            graphicsContext.moveTo(x, y);
+            drawable = new DrawableRectangle(x, y, color, graphicsContext);
+        } else if (circle.isSelected()) {
+            graphicsContext.beginPath();
+            graphicsContext.moveTo(x, y);
+            drawable = new DrawableEllipse(x, y, graphicsContext, color);
+        }
+    }
+
+    private void attemptDraw(MouseDragEvent e) {
+        if (drawable != null && shapeSelected()) {
+            drawable.onMouseReleased(e);
+            graphicsContext.closePath();
+            graphicsContext.beginPath();
+        }
+    }
+
+
+    /**
 	 *  Method to save the current canvas image and put it on the desired Writable Image.
-	 *  @param output desired Writable Image.
 	 */
-	private void takeSnapshot(WritableImage output) {
-		output = mainCanvas.snapshot(new SnapshotParameters(), null);
+	private WritableImage takeSnapshot() throws IOException {
+	    return mainCanvas.snapshot(new SnapshotParameters(), null);
 	}
+
 
 	/**
 	 * Create and populate the recent files menu.
@@ -427,13 +334,9 @@ public class SIMPController {
     /**
      * Undo button action. Undo the last draw movement.
      */
-    public void onUndo() {
-        //TODO enhance this using 2 tempCanvas.
-        //for (DrawAction drawAction : previousMove) {
-        //    graphicsContext.clearRect(drawAction.x, drawAction.y, drawAction.size, drawAction.size);
-        //}
-    	takeSnapshot(redoSnapshot);
-    	printInCanvas(undoSnapshot);		
+    public void onUndo() throws IOException {
+        redoSnapshot = takeSnapshot();
+    	printInCanvas(undoSnapshot);
     }
 
 	/**
@@ -448,9 +351,9 @@ public class SIMPController {
     /**
      * Redo button action. Redo the last draw movement.
      */
-    public void onRedo() {
-    	takeSnapshot(undoSnapshot);
-    	printInCanvas(redoSnapshot);		
+    public void onRedo() throws IOException {
+        undoSnapshot = takeSnapshot();
+    	printInCanvas(redoSnapshot);
     }
 
     /**

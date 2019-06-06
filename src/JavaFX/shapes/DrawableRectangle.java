@@ -68,10 +68,6 @@ public class DrawableRectangle extends Rectangle implements Drawable {
         draw();
     }
 
-    @Override
-    public Shape getShape() {
-        return this;
-    }
 
     public void setToFill(boolean b){
         isFilled = b;
