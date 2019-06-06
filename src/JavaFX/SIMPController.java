@@ -80,12 +80,17 @@ public class SIMPController extends FXMLController{
      * A Writable image to print the temporary canvas redo history.
      */
     WritableImage redoSnapshot;
+    /**
+     * A Canvas used to preview the images before drawing they
+     */
+    Canvas previewCanvas;
 
     /**
      * Special signature method initialize. Instantiates some variables and bind the mouse actions.
      */ //TODO Refactor duplicated code.
     public void initialize() {
 
+        createPreview();
         graphicsContext = mainCanvas.getGraphicsContext2D();
 
         mainCanvas.setOnDragDetected(e -> mainCanvas.startFullDrag());
@@ -165,18 +170,21 @@ public class SIMPController extends FXMLController{
         currentFile = new File("Untitled");
     }
 
+    private void createPreview(){
+        previewCanvas = new Canvas(mainCanvas.getWidth(), mainCanvas.getHeight());
+        canvasBackground.getChildren().add(previewCanvas);
+        previewCanvas.setVisible(false);
+    }
+
     private void createDrawableShape(double x, double y, Color color) {
+        graphicsContext.beginPath();
+        graphicsContext.moveTo(x, y);
+
         if (straightLine.isSelected()) {
-            graphicsContext.beginPath();
-            graphicsContext.moveTo(x, y);
             drawable = new DrawableLine(graphicsContext, x, y, color );
         } else if (rectangle.isSelected()) {
-            graphicsContext.beginPath();
-            graphicsContext.moveTo(x, y);
             drawable = new DrawableRectangle(x, y, color, graphicsContext);
         } else if (circle.isSelected()) {
-            graphicsContext.beginPath();
-            graphicsContext.moveTo(x, y);
             drawable = new DrawableEllipse(x, y, graphicsContext, color);
         }
     }
