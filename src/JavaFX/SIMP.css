@@ -16,11 +16,11 @@
 }
 
 #redo:pressed {
-    -fx-background-color: #858585;
+    -fx-background-color: #a0a0a0;
 }
 
 #undo:pressed {
-    -fx-background-color: #858585;
+    -fx-background-color: #a0a0a0;
 }
 
 /* Toggle Buttons */
@@ -82,31 +82,31 @@
 }
 
 #pencil:selected {
-    -fx-background-color: #858585;
+    -fx-background-color: #a0a0a0;
 }
 
 #eraser:selected {
-    -fx-background-color: #858585;
+    -fx-background-color: #a0a0a0;
 }
 
 #fillColor:selected {
-    -fx-background-color: #858585;
+    -fx-background-color: #a0a0a0;
 }
 
 #insertText:selected {
-    -fx-background-color: #858585;
+    -fx-background-color: #a0a0a0;
 }
 
 #straightLine:selected {
-    -fx-background-color: #858585;
+    -fx-background-color: #a0a0a0;
 }
 
 #rectangle:selected {
-    -fx-background-color: #858585;
+    -fx-background-color: #a0a0a0;
 }
 
 #circle:selected {
-    -fx-background-color: #858585;
+    -fx-background-color: #a0a0a0;
 }
 
 /* Miscellaneous */
@@ -121,4 +121,36 @@
 
 #canvasBackground {
     -fx-background-color: white;
+}
+
+#noFillToggleButton {
+    /*-fx-background-image: url("images/icon_fillColor.png");
+    -fx-background-repeat: stretch;
+    -fx-background-position: 50% 50%;
+    -fx-background-size: 100%;
+    -fx-background-color: transparent;*/
+}
+
+#solidColorToggleButton {
+    /*-fx-background-image: url("images/icon_fillColor.png");
+    -fx-background-repeat: stretch;
+    -fx-background-position: 50% 50%;
+    -fx-background-size: 100%;
+    -fx-background-color: transparent;*/
+}
+
+#noFillToggleButton:selected {
+    -fx-background-color: #a0a0a0;
+}
+
+#solidColorToggleButton:selected {
+    -fx-background-color: #a0a0a0;
+}
+
+#shapeFillMenuButton {
+    /*-fx-background-image: url("images/icon_fillColor.png");
+    -fx-background-repeat: stretch;
+    -fx-background-position: 50% 50%;
+    -fx-background-size: 100%;
+    -fx-background-color: transparent;*/
 }
