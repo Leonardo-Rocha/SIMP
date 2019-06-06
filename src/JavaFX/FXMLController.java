@@ -49,7 +49,7 @@ public abstract class FXMLController {
     protected ToggleButton circle;
 
     /**
-     * FXML StackPane to hold tempCanvas.
+     * FXML StackPane to hold the Canvas.
      */
     @FXML
     protected StackPane canvasBackground;

@@ -1,6 +1,9 @@
 package JavaFX;
 
-import JavaFX.shapes.*;
+import JavaFX.shapes.Drawable;
+import JavaFX.shapes.DrawableEllipse;
+import JavaFX.shapes.DrawableLine;
+import JavaFX.shapes.DrawableRectangle;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -231,7 +234,7 @@ public class SIMPController extends FXMLController{
      */
     private void setExtensionFilters() {
         //TODO fix other formats not working(already tried jpg, jpeg, bmp).
-        String[] extensions = {"png"};
+        String[] extensions = {"png", "jpg", "jpeg", "bmp"};
         FileChooser.ExtensionFilter extensionFilter;
         for (String format : extensions) {
             String extension = "*." + format;
