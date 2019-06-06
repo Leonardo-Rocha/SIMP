@@ -11,7 +11,9 @@ import javafx.event.ActionEvent;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseDragEvent;
@@ -39,8 +41,6 @@ import static javax.swing.JOptionPane.YES_OPTION;
  * @author Leonardo-Rocha, GabrielChiquetto
  */
 public class SIMPController extends FXMLController{
-
-
 
     /**
      * Canvas graphicsContext.
@@ -77,16 +77,16 @@ public class SIMPController extends FXMLController{
     /**
      * A Writable image to print the temporary canvas undo history.
      */
-    WritableImage undoSnapshot;
+    private WritableImage undoSnapshot;
 
     /**
      * A Writable image to print the temporary canvas redo history.
      */
-    WritableImage redoSnapshot;
+    private WritableImage redoSnapshot;
     /**
      * A Canvas used to preview the images before drawing they
      */
-    Canvas previewCanvas;
+    private Canvas previewCanvas;
 
     /**
      * Special signature method initialize. Instantiates some variables and bind the mouse actions.
@@ -103,6 +103,11 @@ public class SIMPController extends FXMLController{
         onBrushSizeTextChanged();
         graphicsContext.setLineCap(StrokeLineCap.ROUND);
         graphicsContext.setLineJoin(StrokeLineJoin.ROUND);
+
+        //Initialize with undo and redo buttons disabled.
+        undo.setDisable(true);
+        redo.setDisable(true);
+
 
         //Bind brushSizeSlider to text.
         brushSizeSlider.valueProperty().addListener(e -> onBrushSizeSliderChanged());
@@ -139,6 +144,7 @@ public class SIMPController extends FXMLController{
         mainCanvas.setOnMousePressed(e -> {
             try {
                 undoSnapshot = takeSnapshot();
+                undo.setDisable(false);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -348,6 +354,8 @@ public class SIMPController extends FXMLController{
     public void onUndo() throws IOException {
         redoSnapshot = takeSnapshot();
     	printInCanvas(undoSnapshot);
+        undo.setDisable(true);
+        redo.setDisable(false);
     }
 
 	/**
@@ -365,6 +373,8 @@ public class SIMPController extends FXMLController{
     public void onRedo() throws IOException {
         undoSnapshot = takeSnapshot();
     	printInCanvas(redoSnapshot);
+        redo.setDisable(true);
+        undo.setDisable(false);
     }
 
     /**
@@ -382,6 +392,20 @@ public class SIMPController extends FXMLController{
     public void onBrushSizeTextChanged() {
         double value = Double.parseDouble(brushSizeText.getText());
         brushSizeSlider.setValue(value);
+    }
+
+    /**
+     * Selects the noFillToggleButton.
+     */
+    public void onNoFillMenuItem() {
+        noFillToggleButton.setSelected(true);
+    }
+
+    /**
+     * Selects the solidColorToggleButton.
+     */
+    public void onSolidColorMenuItem() {
+        solidColorToggleButton.setSelected(true);
     }
 
     /**

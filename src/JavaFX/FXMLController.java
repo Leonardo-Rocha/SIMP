@@ -6,6 +6,19 @@ import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 
 public abstract class FXMLController {
+
+    /**
+     * FXML undo button.
+     */
+    @FXML
+    public Button undo;
+
+    /**
+     * FXML redo button.
+     */
+    @FXML
+    public Button redo;
+
     /**
      * FXML pencil toggle button.
      */
@@ -84,6 +97,22 @@ public abstract class FXMLController {
     @FXML
     protected ColorPicker colorPicker;
 
+    /**
+     * FXML Shape drawing no fill toggle button.
+     */
+    @FXML
+    public ToggleButton noFillToggleButton;
+
+    /**
+     * FXML Shape drawing solid Color toggle button.
+     */
+    @FXML
+    public ToggleButton solidColorToggleButton;
+
+    /**
+     *
+     * @return true if any of the shapes is selected.
+     */
     protected boolean shapeSelected(){
         return rectangle.isSelected() || circle.isSelected() || straightLine.isSelected();
     }

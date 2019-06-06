@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
@@ -126,9 +127,28 @@
                                             <Insets left="5.0" />
                                         </HBox.margin>
                                     </ToggleButton>
+                           <MenuButton fx:id="shapeFillMenuButton" mnemonicParsing="false" stylesheets="@SIMP.css">
+                             <items>
+                               <MenuItem mnemonicParsing="false" onAction="#onNoFillMenuItem" text="No Fill">
+                                    <graphic>
+                                       <ToggleButton fx:id="noFillToggleButton" mnemonicParsing="false" stylesheets="@SIMP.css" text="ToggleButton">
+                                          <toggleGroup>
+                                             <ToggleGroup fx:id="group2" />
+                                          </toggleGroup>
+                                       </ToggleButton>
+                                    </graphic></MenuItem>
+                               <MenuItem mnemonicParsing="false" onAction="#onSolidColorMenuItem" text="Solid Color">
+                                    <graphic>
+                                       <ToggleButton fx:id="solidColorToggleButton" mnemonicParsing="false" text="ToggleButton" toggleGroup="$group2" />
+                                    </graphic></MenuItem>
+                             </items>
+                              <HBox.margin>
+                                 <Insets left="5.0" />
+                              </HBox.margin>
+                           </MenuButton>
                                 </children>
                             </HBox>
-                            <Label alignment="CENTER" opacity="0.6" prefHeight="17.0" prefWidth="70.0" text="Shapes" />
+                            <Label alignment="CENTER" opacity="0.6" prefHeight="17.0" prefWidth="107.0" text="Shapes" />
                         </children>
                     </VBox>
                 </HBox>
