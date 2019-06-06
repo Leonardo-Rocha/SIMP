@@ -116,19 +116,9 @@ public class SIMPController extends FXMLController{
             Color color = colorPicker.getValue();
             graphicsContext.setLineWidth(size);
             if (pencil.isSelected()) {
-                graphicsContext.setStroke(color);
-                graphicsContext.lineTo(x, y);
-                graphicsContext.stroke();
-                graphicsContext.closePath();
-                graphicsContext.beginPath();
-                graphicsContext.moveTo(x, y);
+                brush.onMouseDragged(e);
             } else if (eraser.isSelected()) {
-                graphicsContext.setStroke(Color.WHITE);
-                graphicsContext.lineTo(x, y);
-                graphicsContext.stroke();
-                graphicsContext.closePath();
-                graphicsContext.beginPath();
-                graphicsContext.moveTo(x, y);
+                brush.onMouseDragged(e);
             } else if (shapeSelected()) {
                 graphicsContext.moveTo(x, y);
                 drawable.onMouseDragged(e);
@@ -253,7 +243,7 @@ public class SIMPController extends FXMLController{
     public void onNew(ActionEvent actionEvent) {
         if (currentFile != null) {
             int answer = JOptionPane.showConfirmDialog(null,
-                    "Do you want to save changes to the open file? ",
+                    "Do you want to save changes to "+ currentFile.getName() +"? ",
                     "SIMP", YES_NO_CANCEL_OPTION);
             if (answer == YES_OPTION) {
                 onSaveAs();
@@ -275,6 +265,7 @@ public class SIMPController extends FXMLController{
      */
     public void onOpen(ActionEvent actionEvent) {
         try {
+            onNew(actionEvent);
             currentFile = fileChooser.showOpenDialog(primaryStage);
             openImage(currentFile);
         } catch (IOException e) {

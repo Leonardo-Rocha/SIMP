@@ -32,11 +32,12 @@ public class Pencil implements Brush {
 
     @Override
     public void onMouseDragged(MouseEvent event) {
-        System.out.println("Ordering pencil to draw");
-        draw();
+        graphicsContext.setStroke(color);
+        graphicsContext.lineTo(event.getX(), event.getY());
+        graphicsContext.stroke();
         graphicsContext.closePath();
         graphicsContext.beginPath();
-        graphicsContext.moveTo(clickX, clickY);
+        graphicsContext.moveTo(event.getX(), event.getY());
     }
 
     @Override
