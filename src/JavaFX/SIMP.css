@@ -124,19 +124,19 @@
 }
 
 #noFillToggleButton {
-    /*-fx-background-image: url("images/icon_fillColor.png");
+    -fx-background-image: url("images/icon_noFill.png");
     -fx-background-repeat: stretch;
     -fx-background-position: 50% 50%;
     -fx-background-size: 100%;
-    -fx-background-color: transparent;*/
+    -fx-background-color: transparent;
 }
 
 #solidColorToggleButton {
-    /*-fx-background-image: url("images/icon_fillColor.png");
+    -fx-background-image: url("images/icon_solidColor.png");
     -fx-background-repeat: stretch;
     -fx-background-position: 50% 50%;
     -fx-background-size: 100%;
-    -fx-background-color: transparent;*/
+    -fx-background-color: transparent;
 }
 
 #noFillToggleButton:selected {
@@ -148,9 +148,13 @@
 }
 
 #shapeFillMenuButton {
-    /*-fx-background-image: url("images/icon_fillColor.png");
+    -fx-background-image: url("images/icon_fillShape.png");
     -fx-background-repeat: stretch;
     -fx-background-position: 50% 50%;
     -fx-background-size: 100%;
-    -fx-background-color: transparent;*/
+    -fx-background-color: transparent;
+}
+
+#shapeFillMenuButton:pressed {
+    -fx-background-color: #a0a0a0;
 }
