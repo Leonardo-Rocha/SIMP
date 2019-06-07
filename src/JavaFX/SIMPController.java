@@ -83,17 +83,13 @@ public class SIMPController extends FXMLController{
      * A Writable image to print the temporary canvas redo history.
      */
     private WritableImage redoSnapshot;
-    /**
-     * A Canvas used to preview the images before drawing they
-     */
-    private Canvas previewCanvas;
 
     /**
      * Special signature method initialize. Instantiates some variables and bind the mouse actions.
-     */ //TODO Refactor duplicated code.
+     */
     public void initialize() {
 
-        createPreview();
+        //createPreview();
         graphicsContext = mainCanvas.getGraphicsContext2D();
 
         mainCanvas.setOnDragDetected(e -> mainCanvas.startFullDrag());
@@ -118,7 +114,6 @@ public class SIMPController extends FXMLController{
             double size = brushSizeSlider.getValue();
             double x = e.getX();
             double y = e.getY();
-            Color color = colorPicker.getValue();
             graphicsContext.setLineWidth(size);
             if (pencil.isSelected()) {
                 brush.onMouseDragged(e);
@@ -132,12 +127,9 @@ public class SIMPController extends FXMLController{
 
         //onMouseClicked lambda
         mainCanvas.setOnMousePressed(e -> {
-            try {
-                undoSnapshot = takeSnapshot();
-                undo.setDisable(false);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+
+            undoSnapshot = takeSnapshot();
+            undo.setDisable(false);
 
             double x = e.getX();
             double y = e.getY();
@@ -152,9 +144,7 @@ public class SIMPController extends FXMLController{
                 BucketPainter painter = new BucketPainter(x, y, color, undoSnapshot);
                 printInCanvas(painter.paint());
             } else if (insertText.isSelected()) {
-                //TODO improve this input dialog - add title, icon, etc.
                 String input = JOptionPane.showInputDialog("Enter insertText: ");
-                //TODO add textSize and alignment.
                 graphicsContext.setFill(color);
                 graphicsContext.fillText(input, x, y);
             } else if(shapeSelected()){
@@ -169,11 +159,6 @@ public class SIMPController extends FXMLController{
         currentFile = new File("Untitled");
     }
 
-    private void createPreview(){
-        previewCanvas = new Canvas(mainCanvas.getWidth(), mainCanvas.getHeight());
-        canvasBackground.getChildren().add(previewCanvas);
-        previewCanvas.setVisible(false);
-    }
 
     private void createDrawableShape(double x, double y, Color color) {
         graphicsContext.beginPath();
@@ -186,6 +171,7 @@ public class SIMPController extends FXMLController{
         } else if (circle.isSelected()) {
             drawable = new DrawableEllipse(x, y, graphicsContext, color);
         }
+        drawable.setToFill(solidColorToggleButton.isSelected());
     }
 
     private void attemptDraw(MouseDragEvent e) {
@@ -200,7 +186,7 @@ public class SIMPController extends FXMLController{
     /**
 	 *  Method to save the current canvas image and put it on the desired Writable Image.
 	 */
-	private WritableImage takeSnapshot() throws IOException {
+	private WritableImage takeSnapshot()  {
 	    return mainCanvas.snapshot(new SnapshotParameters(), null);
 	}
 
@@ -229,7 +215,6 @@ public class SIMPController extends FXMLController{
      * Set the extension filters in the file chooser so the user can select only the allowed file extensions.
      */
     private void setExtensionFilters() {
-        //TODO fix other formats not working(already tried jpg, jpeg, bmp).
         String[] extensions = {"png", "jpg", "jpeg", "bmp"};
         FileChooser.ExtensionFilter extensionFilter;
         for (String format : extensions) {
@@ -260,6 +245,9 @@ public class SIMPController extends FXMLController{
         }
     }
 
+    /**
+     *  Clear the mainCanvas graphicsContext.
+     */
     private void clearCanvas() {
         graphicsContext.clearRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
     }
@@ -390,6 +378,7 @@ public class SIMPController extends FXMLController{
      */
     public void onNoFillMenuItem() {
         noFillToggleButton.setSelected(true);
+        solidColorToggleButton.setSelected(false);
     }
 
     /**
@@ -397,6 +386,7 @@ public class SIMPController extends FXMLController{
      */
     public void onSolidColorMenuItem() {
         solidColorToggleButton.setSelected(true);
+        noFillToggleButton.setSelected(false);
     }
 
     /**

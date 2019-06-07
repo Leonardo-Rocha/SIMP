@@ -42,9 +42,10 @@ public class DrawableLine extends Line implements Drawable {
         draw();
     }
 
-
-
-
+    @Override
+    public void setToFill(boolean b) {
+        ;
+    }
 
 
 }

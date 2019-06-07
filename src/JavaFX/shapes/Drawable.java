@@ -15,4 +15,6 @@ public interface Drawable {
 	
 	public void onMouseReleased(MouseEvent event);
 
+	public void setToFill(boolean b);
+
 }
